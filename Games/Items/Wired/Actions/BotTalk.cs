@@ -35,7 +35,7 @@ public class BotTalk : WiredActionBase, IWired, IWiredEffect
 
         var isShout = this.GetIntParam(0) == 1;
 
-        bot.OnChat(message, bot.IsPet ? 0 : 2, isShout);
+        bot.OnChat(message, bot.IsPet ? 0 : 2, 0, isShout);
 
         return false;
     }

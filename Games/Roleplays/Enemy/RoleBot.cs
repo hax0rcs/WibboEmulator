@@ -199,7 +199,7 @@ public class RoleBot
                 }
             }
 
-            bot.OnChat(string.Format(LanguageManager.TryGetValue("rp.chat.ko", Language.French), this.Health, this.Config.Health), bot.IsPet ? 0 : 2, true);
+            bot.OnChat(string.Format(LanguageManager.TryGetValue("rp.chat.ko", Language.French), this.Health, this.Config.Health), bot.IsPet ? 0 : 2, 0, true);
         }
         else
         {
@@ -227,7 +227,7 @@ public class RoleBot
                 }
             }
 
-            bot.OnChat(string.Format(LanguageManager.TryGetValue("rp.hit", room.RoomData.Language), this.Health, this.Config.Health, dmg), bot.IsPet ? 0 : 2, true);
+            bot.OnChat(string.Format(LanguageManager.TryGetValue("rp.hit", room.RoomData.Language), this.Health, this.Config.Health, dmg), bot.IsPet ? 0 : 2, 0, true);
         }
     }
 

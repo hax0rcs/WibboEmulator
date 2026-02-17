@@ -70,7 +70,7 @@ internal sealed class Steal : IChatCommand
             targetRoomUser.SendWhisperChat(string.Format(LanguageManager.TryGetValue("rp.vole.receive", targetRoomUser.Client.Language), numberMoney, userRoom.Username));
 
             session.SendWhisper(string.Format(LanguageManager.TryGetValue("rp.vole.send", session.Language), numberMoney, targetRoomUser.Username));
-            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("rp.vole.send.chat", session.Language), targetRoomUser.Username), 0, true);
+            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("rp.vole.send.chat", session.Language), targetRoomUser.Username), 0, 0, true);
         }
     }
 }

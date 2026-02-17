@@ -50,7 +50,7 @@ public class BotTalkToAvatar : WiredActionBase, IWired, IWiredEffect
         }
         else
         {
-            user.Client.SendPacket(new ChatComposer(bot.VirtualId, message, 2));
+            user.Client.SendPacket(new ChatComposer(bot.VirtualId, message, 0, 2));
         }
 
         return false;

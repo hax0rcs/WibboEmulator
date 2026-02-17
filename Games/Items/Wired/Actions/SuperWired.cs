@@ -1018,7 +1018,7 @@ public class SuperWired(Item item, Room room) : WiredActionBase(item, room, (int
             }
             case "rpsay":
             {
-                user.OnChat(value, 0, false);
+                user.OnChat(value, 0, 0, false);
                 break;
             }
             case "rpsayme":
@@ -1518,7 +1518,7 @@ public class SuperWired(Item item, Room room) : WiredActionBase(item, room, (int
                     textMessage = textMessage.Replace("#username#", user.Username);
                 }
 
-                bot.OnChat(textMessage, 2, true);
+                bot.OnChat(textMessage, 2, 0, true);
 
                 break;
             }

@@ -120,6 +120,7 @@ public class UserFactory
         var discordId = user.DiscordId;
         var discordAvatar = user.DiscordAvatar;
         var discordBanner = user.DiscordBanner;
+        var chatIcon = user.ChatIcon;
 
         var respect = userStats.Respect;
         var dailyRespectPoints = userStats.DailyRespectPoints;
@@ -134,6 +135,6 @@ public class UserFactory
         var bcItemsMax = userStats.BcItemsMax;
         var favoriteGroup = userStats.GroupId;
 
-        return new User(id, username, rank, motto, look, gender, credits, wibboPoints, limitCoins, activityPoints, homeRoom, respect, dailyRespectPoints, kisses, receivedKisses, receivedDuckets, level, dailyPetRespectPoints, hasFriendRequestsDisabled, currentQuestID, achievementPoints, lastOnline, favoriteGroup, accountCreated, acceptTrading, ip, hideInroom, hideOnline, mazoHighScore, mazo, clientVolume, nuxEnable, isFirstConnexionToday, langue, ignoreAllExpire, ignoreRoomInvite, cameraFollowDisabled, gamePointsMonth, bannerId, discordId, discordAvatar, discordBanner, bcItemsUsed, bcItemsMax);
+        return new User(id, username, rank, motto, look, gender, credits, wibboPoints, limitCoins, activityPoints, homeRoom, respect, dailyRespectPoints, kisses, receivedKisses, receivedDuckets, level, dailyPetRespectPoints, hasFriendRequestsDisabled, currentQuestID, achievementPoints, lastOnline, favoriteGroup, accountCreated, acceptTrading, ip, hideInroom, hideOnline, mazoHighScore, mazo, clientVolume, nuxEnable, isFirstConnexionToday, langue, ignoreAllExpire, ignoreRoomInvite, cameraFollowDisabled, gamePointsMonth, bannerId, chatIcon, discordId, discordAvatar, discordBanner, bcItemsUsed, bcItemsMax);
     }
 }

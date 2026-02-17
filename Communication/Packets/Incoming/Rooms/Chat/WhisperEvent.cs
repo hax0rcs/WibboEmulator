@@ -145,7 +145,7 @@ internal sealed class WhisperEvent : IPacketEvent
 
                 message = "(" + groupUsername + ") " + message;
 
-                user.Client?.SendPacket(new WhisperComposer(user.VirtualId, message, color));
+                user.Client?.SendPacket(new WhisperComposer(user.VirtualId, message, session.User.ChatIcon, color));
 
                 if (session.User.IgnoreAll)
                 {
@@ -168,7 +168,7 @@ internal sealed class WhisperEvent : IPacketEvent
                         continue;
                     }
 
-                    userWhiper.Client.SendPacket(new WhisperComposer(user.VirtualId, message, color));
+                    userWhiper.Client.SendPacket(new WhisperComposer(user.VirtualId, message, session.User.ChatIcon, color));
                 }
 
                 var roomUserByRank = room.RoomUserManager.StaffRoomUsers;
@@ -177,7 +177,7 @@ internal sealed class WhisperEvent : IPacketEvent
                     return;
                 }
 
-                var messageWhipser = new WhisperComposer(user.VirtualId, LanguageManager.TryGetValue("moderation.whisper", session.Language) + toUser + ": " + message, color);
+                var messageWhipser = new WhisperComposer(user.VirtualId, LanguageManager.TryGetValue("moderation.whisper", session.Language) + toUser + ": " + message, session.User.ChatIcon, color);
 
                 foreach (var roomUser in roomUserByRank)
                 {
@@ -189,7 +189,7 @@ internal sealed class WhisperEvent : IPacketEvent
             }
             else
             {
-                user.Client?.SendPacket(new WhisperComposer(user.VirtualId, message, color));
+                user.Client?.SendPacket(new WhisperComposer(user.VirtualId, message, session.User.ChatIcon, color));
 
                 if (session.User.IgnoreAll)
                 {
@@ -208,7 +208,7 @@ internal sealed class WhisperEvent : IPacketEvent
                     return;
                 }
 
-                userWhiper.Client.SendPacket(new WhisperComposer(user.VirtualId, message, color));
+                userWhiper.Client.SendPacket(new WhisperComposer(user.VirtualId, message, session.User.ChatIcon, color));
 
                 var roomUserByRank = room.RoomUserManager.StaffRoomUsers;
                 if (roomUserByRank.Count <= 0)
@@ -216,7 +216,7 @@ internal sealed class WhisperEvent : IPacketEvent
                     return;
                 }
 
-                var messageWhipserStaff = new WhisperComposer(user.VirtualId, LanguageManager.TryGetValue("moderation.whisper", session.Language) + toUser + ": " + message, color);
+                var messageWhipserStaff = new WhisperComposer(user.VirtualId, LanguageManager.TryGetValue("moderation.whisper", session.Language) + toUser + ": " + message, session.User.ChatIcon, color);
                 foreach (var roomUser in roomUserByRank)
                 {
                     if (roomUser != null && roomUser.Client != null && roomUser.Client.User != null && roomUser.UserId != user.UserId && roomUser.Client != null && roomUser.Client.User.ViewMurmur && userWhiper.UserId != roomUser.UserId)

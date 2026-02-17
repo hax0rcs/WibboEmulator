@@ -143,6 +143,11 @@ internal sealed class UsersComposer : ServerPacket
 
                 this.WriteString(""); // swimFigure
                 this.WriteInteger(user.AchievementPoints);
+
+                this.WriteString(user.BannerSelected != null ? user.BannerSelected.Id.ToString() : "1");
+                this.WriteInteger(user.RecievedKisses);
+                this.WriteInteger(user.Level);
+
                 this.WriteBoolean(user.Rank > 5); //isModerator
             }
         }

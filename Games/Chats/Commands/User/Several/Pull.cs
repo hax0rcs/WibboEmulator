@@ -45,7 +45,7 @@ internal sealed class Pull : IChatCommand
 
         if (Math.Abs(userRoom.X - targetUser.X) < 3 && Math.Abs(userRoom.Y - targetUser.Y) < 3)
         {
-            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("cmd.pull.chat.success", session.Language), targetName), 0, false);
+            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("cmd.pull.chat.success", session.Language), targetName), 0, 0, false);
             if (userRoom.RotBody % 2 != 0)
             {
                 userRoom.RotBody--;

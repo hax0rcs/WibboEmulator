@@ -21,6 +21,11 @@ internal sealed class MakeSay : IChatCommand
             return;
         }
 
-        roomUserByUserId.OnChat(message, 0, false);
+        if (roomUserByUserId.Client == null)
+        {
+            return;
+        }
+
+        roomUserByUserId.OnChat(message, 0, roomUserByUserId.Client.User.ChatIcon, false);
     }
 }

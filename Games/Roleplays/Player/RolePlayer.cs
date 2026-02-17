@@ -379,7 +379,7 @@ public class RolePlayer
 
             if (user.Client != null)
             {
-                user.OnChat(string.Format(LanguageManager.TryGetValue("rp.chat.ko", user.Client.Language), this.Health, this.HealthMax), 0, true);
+                user.OnChat(string.Format(LanguageManager.TryGetValue("rp.chat.ko", user.Client.Language), this.Health, this.HealthMax), 0, 0, true);
             }
         }
         else
@@ -410,7 +410,7 @@ public class RolePlayer
                 }
                 else
                 {
-                    user.OnChat(string.Format(LanguageManager.TryGetValue("rp.hit", user.Client.Language), this.Health, this.HealthMax, dmg), 0, true);
+                    user.OnChat(string.Format(LanguageManager.TryGetValue("rp.hit", user.Client.Language), this.Health, this.HealthMax, dmg), 0, 0, true);
                 }
             }
         }

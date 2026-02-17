@@ -182,7 +182,7 @@ public class PetBot : BotAI
                         break;
                     case 13: //Panier ?
                         this.RemovePetStatus();
-                        roomUser.OnChat("ZzzZZZzzzzZzz", 0, false);
+                        roomUser.OnChat("ZzzZZZzzzzZzz", 0, 0, false);
                         roomUser.SetStatus("lay", roomUser.Z.ToString());
                         roomUser.IsLay = true;
                         roomUser.UpdateNeeded = true;
@@ -206,7 +206,7 @@ public class PetBot : BotAI
                         break;
                     default:
                         var strArray = LanguageManager.TryGetValue("pet.unknowncommand", roomUser.Room.RoomData.Language).Split(',');
-                        roomUser.OnChat(strArray.GetRandomElement(), 0, false);
+                        roomUser.OnChat(strArray.GetRandomElement(), 0, 0, false);
                         break;
                 }
                 roomUser.PetData.PetEnergy(false);
@@ -221,7 +221,7 @@ public class PetBot : BotAI
                     {
                         var strArray = LanguageManager.TryGetValue("pet.tired", roomUser.Room.RoomData.Language).Split(',');
 
-                        roomUser.OnChat(strArray.GetRandomElement(), 0, false);
+                        roomUser.OnChat(strArray.GetRandomElement(), 0, 0,false);
                         roomUser.SetStatus("lay", roomUser.Z.ToString());
                         roomUser.IsLay = true;
                         this._actionTimer = 45;
@@ -231,7 +231,7 @@ public class PetBot : BotAI
                     {
                         var strArray = LanguageManager.TryGetValue("pet.lazy", roomUser.Room.RoomData.Language).Split(',');
 
-                        roomUser.OnChat(strArray.GetRandomElement(), 0, false);
+                        roomUser.OnChat(strArray.GetRandomElement(), 0, 0, false);
                         roomUser.PetData.PetEnergy(false);
                     }
                 }

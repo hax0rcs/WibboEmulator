@@ -65,6 +65,7 @@ public class User : IDisposable, IEquatable<User>
     public int Respect { get; set; }
     public int Kisses { get; set; }
     public int ReceivedDuckets { get; set; }
+    public int ChatIcon { get; set; }
 
     public int Level { get; set; }
     public int RecievedKisses { get; set; }
@@ -180,7 +181,7 @@ public class User : IDisposable, IEquatable<User>
         int kisses, int receivedKisses, int receivedDuckets, int level, int dailyPetRespectPoints, bool hasFriendRequestsDisabled, int currentQuestID, int achievementPoints,
         int lastOnline, int favoriteGroup, int accountCreated, bool accepttrading, string ip, bool hideInroom,
         bool hideOnline, int mazoHighScore, int mazo, string clientVolume, bool nuxenable, bool isFirstConnexionToday,
-        Language langue, int ignoreAllExpire, bool ignoreRoomInvite, bool cameraFollowDisabled, int gamePointsMonth, int bannerId, string discordId, string discordAvatar, string discordBanner, int bcItemsUsed, int bcItemsMax)
+        Language langue, int ignoreAllExpire, bool ignoreRoomInvite, bool cameraFollowDisabled, int gamePointsMonth, int bannerId, int chatIcon, string discordId, string discordAvatar, string discordBanner, int bcItemsUsed, int bcItemsMax)
     {
         this.Id = id;
         this.Username = username;
@@ -207,6 +208,7 @@ public class User : IDisposable, IEquatable<User>
         this.RatedRooms = [];
         this.Respect = respect;
         this.Kisses = kisses;
+        this.ChatIcon = chatIcon;
         this.RecievedKisses = receivedKisses;
         this.ReceivedDuckets = receivedDuckets;
         this.Level = level;

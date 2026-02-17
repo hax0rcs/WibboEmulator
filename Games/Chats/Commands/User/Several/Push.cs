@@ -90,7 +90,7 @@ internal sealed class Push : IChatCommand
                 targetRoomUser.MoveTo(targetRoomUser.X, targetRoomUser.Y + 1);
             }
 
-            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("cmd.push.chat.success", session.Language), targetName), 0, false);
+            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("cmd.push.chat.success", session.Language), targetName), 0, 0, false);
         }
         else
         {

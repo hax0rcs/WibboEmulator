@@ -31,11 +31,11 @@ internal sealed class UserDao
     ).ToList();
 
     internal static UserEntity GetOneByTicket(IDbConnection dbClient, string ticket) => dbClient.QuerySingleOrDefault<UserEntity>(
-        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points`, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points`, `limit_coins`, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner` FROM `user` WHERE auth_ticket = @SsoTicket LIMIT 1",
+        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points`, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points`, `limit_coins`, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner`, `chat_icon` FROM `user` WHERE auth_ticket = @SsoTicket LIMIT 1",
         new { SsoTicket = ticket });
 
     internal static UserEntity GetOne(IDbConnection dbClient, int userId) => dbClient.QuerySingleOrDefault<UserEntity>(
-        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points`, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points`, `limit_coins`, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner` FROM `user` WHERE id = @Id LIMIT 1",
+        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points`, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points`, `limit_coins`, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner`, `chat_icon` FROM `user` WHERE id = @Id LIMIT 1",
         new { Id = userId });
 
     internal static void UpdateRemoveLimitCoins(IDbConnection dbClient, int userId, int points) => dbClient.Execute(
@@ -121,6 +121,12 @@ internal sealed class UserDao
 
     internal static void UpdateIsBanned(IDbConnection dbClient, int userId) => dbClient.Execute(
         "UPDATE `user` SET `is_banned` = '1' WHERE `id` = '" + userId + "'");
+
+    internal static void UpdateChatIcon(IDbConnection dbClient, int chatIcon, int userId) => dbClient.Execute("UPDATE `user` SET `chat_icon` = @ChatIcon WHERE id = @UserId", new
+    {
+        ChatIcon = chatIcon,
+        UserId = userId
+    });
 }
 
 public class UserEntity
@@ -167,6 +173,6 @@ public class UserEntity
     public int BannerId { get; set; }
     public string DiscordId { get; set; }
     public string DiscordAvatar { get; set; }
-
     public string DiscordBanner { get; set; }
+    public int ChatIcon { get; set; }
 }

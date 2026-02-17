@@ -25,6 +25,6 @@ internal sealed class MakeSayBot : IChatCommand
             return;
         }
 
-        bot.OnChat(message, bot.IsPet ? 0 : 2, false);
+        bot.OnChat(message, bot.IsPet ? 0 : 2, 0, false);
     }
 }

@@ -58,7 +58,7 @@ internal sealed class RideHorseEvent : IPacketEvent
             if (pet.RidingHorse)
             {
                 var speechtxt = LanguageManager.TryGetValue("pet.alreadymounted", session.Language);
-                pet.OnChat(speechtxt, 0, false);
+                pet.OnChat(speechtxt, 0, 0, false);
             }
             else if (user.RidingHorse)
             {

@@ -4,11 +4,12 @@ using Games.Chats.Emotions;
 
 internal sealed class WhisperComposer : ServerPacket
 {
-    public WhisperComposer(int virtualId, string text, int colour)
+    public WhisperComposer(int virtualId, string text, int chatIcon, int colour)
         : base(ServerPacketHeader.UNIT_CHAT_WHISPER)
     {
         this.WriteInteger(virtualId);
         this.WriteString(text);
+        this.WriteInteger(chatIcon);
         this.WriteInteger(ChatEmotionsManager.GetEmotionsForText(text));
         this.WriteInteger(colour);
 

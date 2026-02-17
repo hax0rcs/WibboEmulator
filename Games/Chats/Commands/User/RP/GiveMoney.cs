@@ -78,7 +78,7 @@ internal sealed class GiveMoney : IChatCommand
             targetRoomUser.SendWhisperChat(string.Format(LanguageManager.TryGetValue("rp.givemoney.receive", targetRoomUser.Client.Language), numberMoney, userRoom.Username));
 
             session.SendWhisper(string.Format(LanguageManager.TryGetValue("rp.givemoney.send", session.Language), numberMoney, targetRoomUser.Username));
-            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("rp.givemoney.send.chat", session.Language), targetRoomUser.Username), 0, true);
+            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("rp.givemoney.send.chat", session.Language), targetRoomUser.Username), 0, 0, true);
         }
     }
 }

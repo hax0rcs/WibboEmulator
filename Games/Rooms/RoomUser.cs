@@ -277,15 +277,15 @@ public class RoomUser : IEquatable<RoomUser>
     {
         if (shout)
         {
-            this.Client?.SendPacket(new ShoutComposer(this.VirtualId, messageText, color));
+            this.Client?.SendPacket(new ShoutComposer(this.VirtualId, messageText, 0, color));
         }
         else
         {
-            this.Client?.SendPacket(new ChatComposer(this.VirtualId, messageText, color));
+            this.Client?.SendPacket(new ChatComposer(this.VirtualId, messageText, 0, color));
         }
     }
 
-    public void OnChat(string messageText, int color = 0, bool shout = false, string chatColour = "")
+    public void OnChat(string messageText, int chatIcon = 0, int color = 0, bool shout = false, string chatColour = "")
     {
         if (chatColour != "")
         {
@@ -294,11 +294,11 @@ public class RoomUser : IEquatable<RoomUser>
 
         if (shout)
         {
-            this.Room.SendPacketOnChat(new ShoutComposer(this.VirtualId, messageText, color), this, true, this.Team == TeamType.None && !this.IsBot);
+            this.Room.SendPacketOnChat(new ShoutComposer(this.VirtualId, messageText, chatIcon, color), this, true, this.Team == TeamType.None && !this.IsBot);
         }
         else
         {
-            this.Room.SendPacketOnChat(new ChatComposer(this.VirtualId, messageText, color), this, true, this.Team == TeamType.None && !this.IsBot);
+            this.Room.SendPacketOnChat(new ChatComposer(this.VirtualId, messageText, chatIcon, color), this, true, this.Team == TeamType.None && !this.IsBot);
         }
     }
 

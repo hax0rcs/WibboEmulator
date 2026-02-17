@@ -41,7 +41,7 @@ public class GameClient(string clientId, GameWebSocket connection)
             return;
         }
 
-        this.SendPacket(new WhisperComposer(user.VirtualId, message, info ? 34 : 0));
+        this.SendPacket(new WhisperComposer(user.VirtualId, message, this.User.ChatIcon, info ? 34 : 0));
     }
 
     public void SendNotification(string message) => this.SendPacket(new BroadcastMessageAlertComposer(message));

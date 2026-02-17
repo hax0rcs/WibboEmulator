@@ -361,5 +361,6 @@ public static class CommandManager
         Register(173, new TileHeight());
         Register(174, new TileCopy());
         Register(175, new TileMove());
+        Register(176, new ChatIcon());
     }
 }

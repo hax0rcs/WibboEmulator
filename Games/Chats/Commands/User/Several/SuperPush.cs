@@ -65,7 +65,7 @@ internal sealed class SuperPush : IChatCommand
                 targetRoomUser.MoveTo(targetRoomUser.X - 4, targetRoomUser.Y, true);
             }
 
-            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("cmd.superpush.chat.success", session.Language), targetName), 0, false);
+            userRoom.OnChat(string.Format(LanguageManager.TryGetValue("cmd.superpush.chat.success", session.Language), targetName), 0, 0, false);
         }
         else
         {
