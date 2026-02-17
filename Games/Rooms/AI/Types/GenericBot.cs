@@ -51,7 +51,7 @@ public class GenericBot : BotAI
         {
             if (this.BotData.RandomSpeech.Count > 0 && this.BotData.AutomaticChat)
             {
-                this.RoomUser.OnChat(this.BotData.GetRandomSpeech(), 2, 0, false);
+                this.RoomUser.OnChat(this.BotData.GetRandomSpeech(), 0, 0, false);
             }
 
             this._speechTimer = this.BotData.SpeakingInterval * 2;

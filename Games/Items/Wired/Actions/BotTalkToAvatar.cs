@@ -46,7 +46,7 @@ public class BotTalkToAvatar : WiredActionBase, IWired, IWiredEffect
 
         if (isWhisper)
         {
-            user.Client.SendPacket(new WhisperComposer(bot.VirtualId, message, 2));
+            user.Client.SendPacket(new WhisperComposer(bot.VirtualId, message, 0, 2));
         }
         else
         {

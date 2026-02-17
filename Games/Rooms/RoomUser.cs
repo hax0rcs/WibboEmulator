@@ -271,7 +271,7 @@ public class RoomUser : IEquatable<RoomUser>
         this.IsDispose = true;
     }
 
-    public void SendWhisperChat(string message, bool info = true) => this.Client?.SendPacket(new WhisperComposer(this.VirtualId, message, info ? 34 : 0));
+    public void SendWhisperChat(string message, bool info = true) => this.Client?.SendPacket(new WhisperComposer(this.VirtualId, message, 0, info ? 34 : 0));
 
     public void OnChatMe(string messageText, int color = 0, bool shout = false)
     {

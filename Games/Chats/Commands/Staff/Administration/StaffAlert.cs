@@ -49,7 +49,7 @@ internal sealed class StaffAlert : IChatCommand
                 continue;
             }
 
-            user.Client?.SendPacket(new WhisperComposer(user.VirtualId, "[STAFF ALERT] " + messageTxt + " - " + roomUser.Username, 23));
+            user.Client?.SendPacket(new WhisperComposer(user.VirtualId, "[STAFF ALERT] " + messageTxt + " - " + roomUser.Username, 0, 23));
         }
     }
 }

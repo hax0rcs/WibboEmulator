@@ -141,7 +141,7 @@ internal sealed class Update : IChatCommand
             {
                 ModerationManager.Initialize(dbClient);
                 session.SendWhisper("Moderation mis à jour");
-                GameClientManager.SendMessageStaff(new WhisperComposer(userRoom.VirtualId, "Les outils de modération viennent d'être mis à jour, reconnectez-vous!", 23));
+                GameClientManager.SendMessageStaff(new WhisperComposer(userRoom.VirtualId, "Les outils de modération viennent d'être mis à jour, reconnectez-vous!", 0, 23));
                 break;
             }
             case "catalogue":

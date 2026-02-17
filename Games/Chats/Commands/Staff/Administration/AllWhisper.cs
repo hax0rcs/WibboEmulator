@@ -21,7 +21,8 @@ internal sealed class AllWhisper : IChatCommand
             {
                 continue;
             }
-            user.Client.SendPacket(new WhisperComposer(userRoom.VirtualId, message, 0));
+
+            user.Client.SendPacket(new WhisperComposer(userRoom.VirtualId, message, 0, 0));
         }
     }
 }

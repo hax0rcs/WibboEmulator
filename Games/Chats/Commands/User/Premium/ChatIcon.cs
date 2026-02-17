@@ -1,6 +1,8 @@
 namespace WibboEmulator.Games.Chats.Commands.User.Premium;
 
 using WibboEmulator.Core.Language;
+using WibboEmulator.Database;
+using WibboEmulator.Database.Daos.User;
 using WibboEmulator.Games.GameClients;
 using WibboEmulator.Games.Rooms;
 
@@ -20,5 +22,8 @@ internal class ChatIcon : IChatCommand
         }
 
         session.User.ChatIcon = chatIcon;
+
+        using var dbClient = DatabaseManager.Connection;
+        UserDao.UpdateChatIcon(dbClient, chatIcon, session.User.Id);
     }
 }
