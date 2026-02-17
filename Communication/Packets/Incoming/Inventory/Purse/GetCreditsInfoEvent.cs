@@ -10,6 +10,6 @@ internal sealed class GetCreditsInfoEvent : IPacketEvent
     public void Parse(GameClient session, ClientPacket packet)
     {
         session.SendPacket(new CreditBalanceComposer(session.User.Credits));
-        session.SendPacket(new ActivityPointsComposer(session.User.WibboPoints, session.User.LimitCoins));
+        session.SendPacket(new ActivityPointsComposer(session.User.Duckets, session.User.WibboPoints));
     }
 }

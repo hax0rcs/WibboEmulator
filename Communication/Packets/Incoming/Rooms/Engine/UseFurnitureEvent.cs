@@ -76,12 +76,9 @@ internal sealed class UseFurnitureEvent : IPacketEvent
             QuestManager.ProgressUserQuest(session, QuestType.ExploreFindItem, 2148);
         }
 
-        bool userHasRights = room.CheckRights(session);
-
         var request = packet.PopInt();
-        session.SendWhisper("request: " + request);
 
-        roomItem.Interactor.OnTrigger(session, roomItem, request, userHasRights, false);
+        roomItem.Interactor.OnTrigger(session, roomItem, request, room.CheckRights(session), false);
         roomItem.OnTrigger(room.RoomUserManager.GetRoomUserByUserId(session.User.Id));
     }
 }

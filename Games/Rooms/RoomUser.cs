@@ -285,7 +285,7 @@ public class RoomUser : IEquatable<RoomUser>
         }
     }
 
-    public void OnChat(string messageText, int chatIcon = 0, int color = 0, bool shout = false, string chatColour = "")
+    public void OnChat(string messageText, int color = 0, int chatIcon = 0, bool shout = false, string chatColour = "")
     {
         if (chatColour != "")
         {

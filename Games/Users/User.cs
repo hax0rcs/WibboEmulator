@@ -56,12 +56,12 @@ public class User : IDisposable, IEquatable<User>
     public string BackupGender { get; set; }
     public bool LastMovFGate { get; set; }
     public int Credits { get; set; }
-    public int WibboPoints { get; set; }
-    public int LimitCoins { get; set; }
+    public int Duckets { get; set; }//duckets or pixels
+    public int WibboPoints { get; set; }//diamonds
+    public int LimitCoins { get; set; }//special wibbo coin
     public int AccountCreated { get; set; }
     public int GamePointsMonth { get; set; }
     public int AchievementPoints { get; set; }
-    public int Duckets { get; set; }
     public int Respect { get; set; }
     public int Kisses { get; set; }
     public int ReceivedDuckets { get; set; }
@@ -538,7 +538,7 @@ public class User : IDisposable, IEquatable<User>
         var timeOnline = DateTime.Now - this.OnlineTime;
         var timeOnlineSec = (int)timeOnline.TotalSeconds;
 
-        UserDao.UpdateOffline(dbClient, this.Id, this.Duckets, this.Credits, this.BannerSelected != null ? this.BannerSelected.Id : -1);
+        UserDao.UpdateOffline(dbClient, this.Id, this.Duckets, this.WibboPoints, this.LimitCoins, this.Credits, this.BannerSelected != null ? this.BannerSelected.Id : -1);
         UserStatsDao.UpdateAll(dbClient, this.Id, this.FavouriteGroupId, timeOnlineSec, this.QuestId, this.Respect, this.DailyRespectPoints, this.Kisses, this.RecievedKisses, this.ReceivedDuckets, this.Level, this.BCItemsUsed, this.BCItemsMax, this.DailyPetRespectPoints);
     }
 

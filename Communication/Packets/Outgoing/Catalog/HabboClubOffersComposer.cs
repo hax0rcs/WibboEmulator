@@ -16,19 +16,19 @@ internal sealed class HabboClubOffersComposer : ServerPacket
             this.WriteBoolean(false);//useless
             this.WriteInteger(item.CostCredits); //priceCredits
 
-            if (item.CostWibboPoints > 0)
+            if (item.CostDuckets > 0)
             {
-                this.WriteInteger(item.CostWibboPoints);
+                this.WriteInteger(item.CostDuckets);
                 this.WriteInteger(105);
             }
-            else if (item.CostLimitCoins > 0)
+            else if (item.CostWibboPoints > 0)
             {
-                this.WriteInteger(item.CostLimitCoins);
+                this.WriteInteger(item.CostWibboPoints);
                 this.WriteInteger(55);
             }
             else
             {
-                this.WriteInteger(item.CostDuckets);
+                this.WriteInteger(item.CostLimitCoins);
                 this.WriteInteger(0);
             }
 

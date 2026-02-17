@@ -4,6 +4,7 @@ using Database;
 using Database.Daos.User;
 using Games.GameClients;
 using Games.Rooms;
+using WibboEmulator.Communication.Packets.Outgoing.Inventory.Purse;
 
 public class UserGiveStarEvent : IPacketEvent
 {
@@ -36,11 +37,14 @@ public class UserGiveStarEvent : IPacketEvent
         session.User.Duckets--;
         roomUserByUserIdTarget.Client.User.ReceivedDuckets++;
         roomUserByUserIdTarget.Client.User.Duckets++;
+
         UserStatsDao.UpdateReceivedDuckets(DatabaseManager.Connection, roomUserByUserIdTarget.UserId, 1);
         var roomUserByUserId = room.RoomUserManager.GetRoomUserByUserId(session.User.Id);
-        roomUserByUserId.OnChat($"Dou-lhe +1 Ducket para {roomUserByUserIdTarget.Username}");
-        roomUserByUserIdTarget.OnChat($"Recebo +1 um Ducket de {roomUserByUserId.Username}");
+
+        roomUserByUserId.SendWhisperChat($"Você deu 1 Ducket para {roomUserByUserIdTarget.Username}", false);
+        roomUserByUserIdTarget.SendWhisperChat($"{roomUserByUserId.Username} te deu 1 Ducket.", false);
+
+        roomUserByUserId.Client.SendPacket(new ActivityPointNotificationComposer(roomUserByUserId.Client.User.WibboPoints, 0, 105));
+        roomUserByUserIdTarget.Client.SendPacket(new ActivityPointNotificationComposer(roomUserByUserIdTarget.Client.User.wibb, 0, 105));
     }
-
-
 }

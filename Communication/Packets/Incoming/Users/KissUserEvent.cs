@@ -31,8 +31,10 @@ public class KissUserEvent : IPacketEvent
 
         session.User.Kisses--;
         roomUserByUserIdTarget.Client.User.RecievedKisses++;
+
         var roomUserByUserId = room.RoomUserManager.GetRoomUserByUserId(session.User.Id);
-        roomUserByUserId.OnChat($"Beijando {roomUserByUserIdTarget.Username}");
-        roomUserByUserIdTarget.OnChat($"Recebo um beijo de {roomUserByUserId.Username}");
+
+        roomUserByUserId.OnChat($"* Beijando {roomUserByUserIdTarget.Username}  *", 16);
+        roomUserByUserIdTarget.OnChat($"* Recebo um beijo de {roomUserByUserId.Username}  *", 16);
     }
 }

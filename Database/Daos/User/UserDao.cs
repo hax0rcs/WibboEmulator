@@ -31,11 +31,11 @@ internal sealed class UserDao
     ).ToList();
 
     internal static UserEntity GetOneByTicket(IDbConnection dbClient, string ticket) => dbClient.QuerySingleOrDefault<UserEntity>(
-        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points`, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points`, `limit_coins`, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner`, `chat_icon` FROM `user` WHERE auth_ticket = @SsoTicket LIMIT 1",
+        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points` AS ActivityPoints, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points` AS VipPoints, `limit_coins` AS LimitCoins, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner`, `chat_icon` FROM `user` WHERE auth_ticket = @SsoTicket LIMIT 1",
         new { SsoTicket = ticket });
 
     internal static UserEntity GetOne(IDbConnection dbClient, int userId) => dbClient.QuerySingleOrDefault<UserEntity>(
-        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points`, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points`, `limit_coins`, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner`, `chat_icon` FROM `user` WHERE id = @Id LIMIT 1",
+        "SELECT `id`, `username`, `auth_ticket`, `rank`, `credits`, `activity_points` AS ActivityPoints, `look`, `gender`, `motto`, `account_created`, `last_online`, `online`, `ip_last`, `home_room`, `block_newfriends`, `hide_online`, `hide_inroom`, `camera_follow_disabled`, `ignore_room_invite`, `last_offline`, `mois_vip`, `volume`, `vip_points` AS VipPoints, `limit_coins` AS LimitCoins, `accept_trading`, `lastdailycredits`, `hide_gamealert`, `ipcountry`, `game_points`, `game_points_month`, `mazoscore`, `mazo`, `nux_enable`, `langue`, `run_points`, `run_points_month`, `is_banned`, `banner_id`, `discord_id`, `discord_avatar`, `discord_banner`, `chat_icon` FROM `user` WHERE id = @Id LIMIT 1",
         new { Id = userId });
 
     internal static void UpdateRemoveLimitCoins(IDbConnection dbClient, int userId, int points) => dbClient.Execute(
@@ -110,8 +110,8 @@ internal sealed class UserDao
     internal static void UpdateAddRunPoints(IDbConnection dbClient, int userId) => dbClient.Execute(
         "UPDATE `user` SET `run_points` = `run_points` + 1, `run_points_month` = `run_points_month` + 1 WHERE `id` = '" + userId + "'");
 
-    internal static void UpdateOffline(IDbConnection dbClient, int userId, int duckets, int credits, int bannerId) => dbClient.Execute(
-        "UPDATE `user` SET `online` = '0', `last_online` = '" + WibboEnvironment.GetUnixTimestamp() + "', `activity_points` = '" + duckets + "', `credits` = '" + credits + "', `banner_id` = '" + bannerId + "' WHERE `id` = '" + userId + "'");
+    internal static void UpdateOffline(IDbConnection dbClient, int userId, int duckets, int wibboPoints, int limitCoins, int credits, int bannerId) => dbClient.Execute(
+        "UPDATE `user` SET `online` = '0', `last_online` = '" + WibboEnvironment.GetUnixTimestamp() + "', `vip_points` = '" + wibboPoints + "', `activity_points` = '" + duckets + "', `limit_coins` = '" + limitCoins + "', `credits` = '" + credits + "', `banner_id` = '" + bannerId + "' WHERE `id` = '" + userId + "'");
 
     internal static void UpdateLastDailyCredits(IDbConnection dbClient, int userId, string lastDailyCredits) => dbClient.Execute(
         "UPDATE `user` SET `lastdailycredits` = '" + lastDailyCredits + "' WHERE `id` = '" + userId + "'");
@@ -138,7 +138,7 @@ public class UserEntity
     public string AuthTicket { get; set; }
     public int Rank { get; set; }
     public int Credits { get; set; }
-    public int ActivityPoints { get; set; }
+    public int ActivityPoints { get; set; }//duckets
     public string Look { get; set; }
     public string Gender { get; set; }
     public string Motto { get; set; }
@@ -153,8 +153,8 @@ public class UserEntity
     public int LastOffline { get; set; }
     public int MoisVip { get; set; }
     public string Volume { get; set; }
-    public int VipPoints { get; set; }
-    public int LimitCoins { get; set; }
+    public int VipPoints { get; set; }//wibbo points
+    public int LimitCoins { get; set; }//special wibbo coin
     public bool AcceptTrading { get; set; }
     public bool CameraFollowDisabled { get; set; }
     public bool IgnoreRoomInvite { get; set; }

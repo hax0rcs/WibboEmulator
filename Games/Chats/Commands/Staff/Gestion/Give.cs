@@ -57,7 +57,7 @@ internal sealed class Give : IChatCommand
                     if (int.TryParse(parameters[3], out var amount))
                     {
                         targetUser.User.WibboPoints += amount;
-                        targetUser.SendPacket(new ActivityPointNotificationComposer(targetUser.User.WibboPoints, 0, 105));
+                        targetUser.SendPacket(new ActivityPointNotificationComposer(targetUser.User.WibboPoints, 0, 115));
 
                         if (targetUser.User.Id != session.User.Id)
                         {
@@ -74,8 +74,29 @@ internal sealed class Give : IChatCommand
                     }
                 }
             }
+            case "duckets":
+            {
+                if (int.TryParse(parameters[3], out var amount))
+                {
+                    targetUser.User.Duckets += amount;
+                    targetUser.SendPacket(new ActivityPointNotificationComposer(targetUser.User.WibboPoints, 0, 105));
 
+                    if (targetUser.User.Id != session.User.Id)
+                    {
+                        targetUser.SendNotification(session.User.Username + " t'a donné " + amount.ToString() + " Ducket(s)!");
+                    }
+
+                    session.SendWhisper("Tu as donné " + amount + " Ducket(s) à " + targetUser.User.Username + "!");
+                    break;
+                }
+                else
+                {
+                    session.SendWhisper("Désolé, le montant n'est pas valide");
+                    break;
+                }
+            }
             case "limitcoins":
+            case "diamonds":
             case "ltc":
             {
                 if (!session.User.HasPermission("give_limitcoins"))
@@ -105,7 +126,6 @@ internal sealed class Give : IChatCommand
                     }
                 }
             }
-
             default:
                 session.SendWhisper("'" + updateVal + "' n'est pas une monnaie ! ");
                 break;

@@ -45,7 +45,7 @@ public class InteractorDice : FurniInteractor
                 {
                     roomUser.DiceCounterAmount = 0;
                     roomUser.DiceCounter = 0;
-                    roomUser.OnChat($"Dée: remise à 0 ({roomUser.Username})", 33);
+                    roomUser.OnChat($"Dée: remise à 0 ({roomUser.Username})", 0, 33);
                 }
             }
             else

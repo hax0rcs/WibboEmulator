@@ -24,6 +24,7 @@ public class PetBot : BotAI
     private void RemovePetStatus()
     {
         var roomUser = this.RoomUser;
+
         roomUser.RemoveStatus("sit");
         roomUser.RemoveStatus("lay");
         roomUser.RemoveStatus("snf");

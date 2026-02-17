@@ -129,7 +129,7 @@ internal sealed class SSOTicketEvent : IPacketEvent
 
             if (session.User.HasPermission("helptool") && session.User.BadgeComponent.HasBadgeSlot("STAFF_HELPER"))
             {
-                HelpManager.TryAddGuide(session.User.Id);
+                _ = HelpManager.TryAddGuide(session.User.Id);
                 session.User.OnDuty = true;
 
                 packetList.Add(new HelperToolComposer(session.User.OnDuty, HelpManager.Count));
