@@ -17,11 +17,13 @@ internal sealed class ProfileInformationComposer : ServerPacket
         this.WriteString(habbo.Motto);
         this.WriteString(origin.ToString("dd/MM/yyyy"));
         this.WriteInteger(habbo.AchievementPoints);
+
         this.WriteInteger(habbo.ReceivedDuckets);
         this.WriteInteger(habbo.Level);
-        this.WriteString(habbo.DiscordId);
-        this.WriteString(habbo.DiscordAvatar);
-        this.WriteString(habbo.DiscordBanner);
+        this.WriteInteger(habbo.Rank);
+        this.WriteInteger(0);//event wins. Exibimos a quantidade de eventos ganhos, agora atualmente sem suporte.
+        this.WriteInteger(habbo.Respect);//respects count
+
         this.WriteInteger(friendCount); // Friend Count
         this.WriteBoolean(habbo.Id != session.User.Id && session.User.Messenger.FriendshipExists(habbo.Id)); //  Is friend
         this.WriteBoolean(habbo.Id != session.User.Id && !session.User.Messenger.FriendshipExists(habbo.Id) && session.User.Messenger.RequestExists(habbo.Id)); // Sent friend request
