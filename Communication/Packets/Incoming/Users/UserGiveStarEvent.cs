@@ -35,6 +35,7 @@ public class UserGiveStarEvent : IPacketEvent
 
         session.User.Duckets--;
         roomUserByUserIdTarget.Client.User.ReceivedDuckets++;
+        roomUserByUserIdTarget.Client.User.Duckets++;
         UserStatsDao.UpdateReceivedDuckets(DatabaseManager.Connection, roomUserByUserIdTarget.UserId, 1);
         var roomUserByUserId = room.RoomUserManager.GetRoomUserByUserId(session.User.Id);
         roomUserByUserId.OnChat($"Dou-lhe +1 Ducket para {roomUserByUserIdTarget.Username}");

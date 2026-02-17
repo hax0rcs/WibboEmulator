@@ -4,7 +4,7 @@ using Games.Chats.Emotions;
 
 internal sealed class ShoutComposer : ServerPacket
 {
-    public ShoutComposer(int virtualId, string message, int chatIcon, int color)
+    public ShoutComposer(int virtualId, string message, int color, int chatIcon)
         : base(ServerPacketHeader.UNIT_CHAT_SHOUT)
     {
         this.WriteInteger(virtualId);

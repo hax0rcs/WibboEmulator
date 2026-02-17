@@ -189,7 +189,7 @@ internal sealed partial class ChatEvent(bool isShout = false) : IPacketEvent
             message = MentionManager.Parse(session, message);
         }
 
-        user.OnChat(message, session.User.ChatIcon, color, isShout, chatColour);
+        user.OnChat(message, color, session.User.ChatIcon, isShout, chatColour);
     }
 
     [GeneratedRegex("\\[tag\\](.*?)\\[\\/tag\\]")]

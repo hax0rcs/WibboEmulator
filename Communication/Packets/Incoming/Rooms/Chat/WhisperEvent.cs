@@ -134,7 +134,7 @@ internal sealed class WhisperEvent : IPacketEvent
 
             user.Unidle();
 
-            if (toUser == "groupe")
+            if (toUser == "group")
             {
                 if (user.WhisperGroupUsers.Count <= 0)
                 {
