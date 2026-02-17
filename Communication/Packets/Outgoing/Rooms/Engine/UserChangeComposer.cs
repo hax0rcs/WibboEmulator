@@ -15,7 +15,7 @@ internal sealed class UserChangeComposer : ServerPacket
         this.WriteInteger(user.Client.User.AchievementPoints);
 
         // CUSTOMS
-        this.WriteString(user.Client.User.BannerSelected.ToString());
+        this.WriteString(user.Client.User.BannerSelected != null ? user.Client.User.BannerSelected.ToString() : "1");
         this.WriteInteger(user.Client.User.Level);
         this.WriteInteger(user.Client.User.RecievedKisses);
     }
