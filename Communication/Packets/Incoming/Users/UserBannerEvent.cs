@@ -1,0 +1,34 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Users;
+
+using Games.GameClients;
+using Games.Users;
+using Outgoing.Users;
+
+internal sealed class UserBannerEvent : IPacketEvent
+{
+    public double Delay => 0;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        var userId = packet.PopInt();
+        var all = packet.PopBoolean();
+
+        var user = UserManager.GetUserById(userId);
+        if (user == null)
+        {
+            return;
+        }
+
+        if (user.BannerComponent == null)
+        {
+            return;
+        }
+
+        if (all)
+        {
+            session.SendPacket(new UserBannerListComposer(user.BannerComponent.BannerList));
+        }
+
+        session.SendPacket(new UserBannerComposer(user.Id, user.BannerSelected));
+    }
+}

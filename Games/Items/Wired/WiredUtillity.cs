@@ -1,0 +1,127 @@
+namespace WibboEmulator.Games.Items.Wired;
+
+using System.Data;
+using Database.Daos.Item;
+using Rooms;
+
+public class WiredUtillity
+{
+    public static bool TypeIsWiredTrigger(InteractionType type) => type switch
+    {
+        InteractionType.TRIGGER_COLLISION or InteractionType.TRIGGER_ONCE or InteractionType.TRIGGER_CHRONO_UP or InteractionType.TRIGGER_USER_ACTION or InteractionType.TRIGGER_USER_IDLE or InteractionType.TRIGGER_AVATAR_ENTERS_ROOM or InteractionType.TRIGGER_GAME_ENDS or InteractionType.TRIGGER_GAME_STARTS or InteractionType.TRIGGER_PERIODICALLY or InteractionType.TRIGGER_PERIODICALLY_LONG or InteractionType.TRIGGER_AVATAR_SAYS_SOMETHING or InteractionType.TRIGGER_COMMAND or InteractionType.TRIGGER_COMMAND_SELF or InteractionType.TRIGGER_COLLISION_USER or InteractionType.TRIGGER_COLLISION_USER_SELF or InteractionType.TRIGGER_SCORE_ACHIEVED or InteractionType.TRIGGER_STATE_CHANGED or InteractionType.TRIGGER_WALK_ON_FURNI or InteractionType.TRIGGER_WALK_OFF_FURNI or InteractionType.TRIGGER_BOT_REACHED_AVTR or InteractionType.TRIGGER_BOT_REACHED_STF or InteractionType.TRIGGER_AVATAR_EXIT or InteractionType.TRIGGER_USER_CLICK or InteractionType.TRIGGER_USER_CLICK_SELF => true,
+        _ => false,
+    };
+
+    public static bool TypeIsWiredAction(InteractionType type) => type switch
+    {
+        InteractionType.ACTION_RESET_POINTS_HIGHSCORE or InteractionType.ACTION_USER_LAY or InteractionType.ACTION_USER_SIT or InteractionType.ACTION_USER_STAND or InteractionType.ACTION_ALTITUDE or InteractionType.ACTION_USER_ROTATION or InteractionType.ACTION_CONTROL_CHRONO or InteractionType.ACTION_CHANGE_LIFES or InteractionType.ACTION_GIVE_POINTS_HIGHSCORE or InteractionType.ACTION_TRIDIMENSION or InteractionType.ACTION_TELEPORT_FURNI or InteractionType.ACTION_ROOM_MESSAGE or InteractionType.ACTION_GIVE_SCORE or InteractionType.ACTION_POS_RESET or InteractionType.ACTION_MOVE_ROTATE or InteractionType.ACTION_RESET_TIMER or InteractionType.ACTION_SHOW_MESSAGE or InteractionType.HIGH_SCORE or InteractionType.HIGH_SCORE_POINTS or InteractionType.ACTION_SUPER_WIRED or InteractionType.ACTION_KICK_USER or InteractionType.ACTION_TELEPORT_TO or InteractionType.ACTION_ENDGAME_TEAM or InteractionType.ACTION_TOGGLE_STATE or InteractionType.ACTION_CALL_STACKS or InteractionType.ACTION_FLEE or InteractionType.ACTION_CHASE or InteractionType.ACTION_COLLISION_CASE or InteractionType.ACTION_COLLISION_ITEM or InteractionType.ACTION_COLLISION_TEAM or InteractionType.ACTION_GIVE_REWARD or InteractionType.ACTION_MOVE_TO_DIR or InteractionType.ACTION_BOT_CLOTHES or InteractionType.ACTION_BOT_TELEPORT or InteractionType.ACTION_BOT_FOLLOW_AVATAR or InteractionType.ACTION_BOT_GIVE_HANDITEM or InteractionType.ACTION_BOT_MOVE or InteractionType.ACTION_USER_MOVE or InteractionType.ACTION_BOT_TALK_TO_AVATAR or InteractionType.ACTION_BOT_TALK or InteractionType.ACTION_JOIN_TEAM or InteractionType.ACTION_LEAVE_TEAM or InteractionType.ACTION_GIVE_SCORE_TM => true,
+        _ => false,
+    };
+
+    public static bool TypeIsWiredCondition(InteractionType type) => type switch
+    {
+        InteractionType.CONDITION_COMPARE_HIGHSCORE or InteractionType.CONDITION_TEAM_HAS_RANK or InteractionType.CONDITION_FURNI_ALTITUDE or InteractionType.CONDITION_TEAM_HAS_SCORE or InteractionType.CONDITION_ACTOR_HAS_ROTATION or InteractionType.CONDITION_ACTOR_NOT_HAS_ROTATION or InteractionType.CONDITION_CHRONO_COMPARE or InteractionType.CONDITION_FURNIS_HAVE_USERS or InteractionType.CONDITION_FURNIS_HAVE_NO_USERS or InteractionType.CONDITION_STATE_POS or InteractionType.CONDITION_STUFF_IS or InteractionType.CONDITION_NOT_STUFF_IS or InteractionType.CONDITION_STATE_POS_NEGATIVE or InteractionType.CONDITION_DATE_RNG_ACTIVE or InteractionType.CONDITION_TIME_LESS_THAN or InteractionType.CONDITION_TIME_MORE_THAN or InteractionType.CONDITION_TRIGGER_ON_FURNI or InteractionType.CONDITION_TRIGGER_ON_FURNI_NEGATIVE or InteractionType.CONDITION_HAS_FURNI_ON_FURNI or InteractionType.CONDITION_HAS_FURNI_ON_FURNI_NEGATIVE or InteractionType.CONDITION_ACTOR_IN_GROUP or InteractionType.CONDITION_NOT_IN_GROUP or InteractionType.CONDITION_SUPER_WIRED or InteractionType.CONDITION_HAS_HANDITEM or InteractionType.CONDITION_ACTOR_IN_TEAM or InteractionType.CONDITION_NOT_IN_TEAM or InteractionType.CONDITION_NOT_USER_COUNT or InteractionType.CONDITION_USER_COUNT_IN or InteractionType.CONDITION_COLLISION_IS or InteractionType.CONDITION_NOT_COLLISION_IS => true,
+        _ => false,
+    };
+
+    public static bool TypeIsWiredSpecial(InteractionType type) => type switch
+    {
+        InteractionType.SPECIAL_RANDOM or InteractionType.SPECIAL_UNSEEN or InteractionType.SPECIAL_ANIMATE or InteractionType.SPECIAL_OR_EVAL => true,
+        _ => false,
+    };
+
+    public static bool TypeIsWired(InteractionType type)
+    {
+        if (TypeIsWiredTrigger(type))
+        {
+            return true;
+        }
+        else if (TypeIsWiredAction(type))
+        {
+            return true;
+        }
+        else if (TypeIsWiredCondition(type))
+        {
+            return true;
+        }
+        else if (TypeIsWiredSpecial(type))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool AllowHideWiredType(InteractionType type)
+    {
+        if (type is InteractionType.HIGH_SCORE or InteractionType.HIGH_SCORE_POINTS)
+        {
+            return false;
+        }
+
+        if (type is InteractionType.WIRED_ITEM)
+        {
+            return true;
+        }
+
+        if (TypeIsWired(type))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void SaveInDatabase(IDbConnection dbClient, int triggerId, string triggerData2, string triggerData, bool allUsertriggerable = false, List<Item> itemslist = null, int delay = 0)
+    {
+        var triggerItems = itemslist != null ? string.Join(";", itemslist.Select(item => item.Id)) : "";
+
+        ItemWiredDao.Replace(dbClient, triggerId, triggerData, triggerData2, allUsertriggerable, triggerItems, delay);
+    }
+
+    public static void ParseMessage(RoomUser user, Room room, ref string textMessage)
+    {
+        if (user != null)
+        {
+            textMessage = textMessage.Replace("#username#", user.Username);
+            textMessage = textMessage.Replace("#point#", user.WiredPoints.ToString());
+
+            if (user.Client != null && user.Client.User != null && user.Client.User.InventoryComponent != null)
+            {
+                var totalPoints = user.Client.User.WibboPoints + user.Client.User.InventoryComponent.GetInventoryPoints();
+
+                textMessage = textMessage.Replace("#wpcount#", totalPoints.ToString());
+                textMessage = textMessage.Replace("#ltccount#", user.Client.User.LimitCoins.ToString());
+            }
+
+            if (user.Roleplayer != null)
+            {
+                textMessage = textMessage.Replace("#money#", user.Roleplayer.Money.ToString());
+            }
+        }
+
+        if (room != null)
+        {
+            textMessage = textMessage.Replace("#teamin1#", room.GameManager.GetTeamInPosition(1).ToString());
+            textMessage = textMessage.Replace("#teamin2#", room.GameManager.GetTeamInPosition(2).ToString());
+            textMessage = textMessage.Replace("#teamin3#", room.GameManager.GetTeamInPosition(3).ToString());
+            textMessage = textMessage.Replace("#teamin4#", room.GameManager.GetTeamInPosition(4).ToString());
+
+            textMessage = textMessage.Replace("#roomname#", room.RoomData.Name.ToString());
+            textMessage = textMessage.Replace("#vote_yes#", room.VotedYesCount.ToString());
+            textMessage = textMessage.Replace("#vote_no#", room.VotedNoCount.ToString());
+        }
+    }
+}
+
+public class ItemsPosReset(int id, int x, int y, double z, int rot, string extraData)
+{
+    public int Id { get; set; } = id;
+    public int X { get; set; } = x;
+    public int Y { get; set; } = y;
+    public double Z { get; set; } = z;
+    public int Rot { get; set; } = rot;
+    public string ExtraData { get; set; } = extraData;
+}

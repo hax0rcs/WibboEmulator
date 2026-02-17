@@ -1,0 +1,154 @@
+namespace WibboEmulator.Games.Catalogs;
+
+using Builders;
+using Communication.Packets.Outgoing;
+using Database.Daos.Item;
+using Items;
+using Utilities;
+
+internal static class CatalogItemUtility
+{
+    public static void GenerateOfferData(CatalogItem item, bool isPremium, ServerPacket message)
+    {
+        message.WriteInteger(item.Id);
+        message.WriteString(item.Name);
+        message.WriteBoolean(false);//IsRentable
+        message.WriteInteger(item.CostCredits);
+
+        if (item.CostWibboPoints > 0)
+        {
+            message.WriteInteger(item.CostWibboPoints);
+            message.WriteInteger(105);
+        }
+        else if (item.CostLimitCoins > 0)
+        {
+            message.WriteInteger(item.CostLimitCoins);
+            message.WriteInteger(55);
+        }
+        else
+        {
+            message.WriteInteger(item.CostDuckets);
+            message.WriteInteger(0);
+        }
+
+        message.WriteBoolean(ItemUtility.CanGiftItem(item));
+
+        message.WriteInteger(string.IsNullOrEmpty(item.Badge) || item.Data.Type == ItemType.B ? 1 : 2);
+
+        if (item.Data.Type != ItemType.B)
+        {
+            message.WriteString(item.Data.Type.ToString());
+            message.WriteInteger(item.Data.SpriteId);
+            if (item.Data.InteractionType is InteractionType.WALLPAPER or InteractionType.FLOOR or InteractionType.LANDSCAPE)
+            {
+                message.WriteString(item.Name.Split('_')[2]);
+            }
+            else if (item.Data.InteractionType == InteractionType.BOT)//Bots
+            {
+                if (!CatalogManager.TryGetBot(item.ItemId, out var catalogBot))
+                {
+                    message.WriteString("hd-180-7.ea-1406-62.ch-210-1321.hr-831-49.ca-1813-62.sh-295-1321.lg-285-92");
+                }
+                else
+                {
+                    message.WriteString(catalogBot.Figure);
+                }
+            }
+            else
+            {
+                message.WriteString("");
+            }
+            message.WriteInteger(item.Amount);
+            message.WriteBoolean(item.IsLimited); // IsLimited
+            if (item.IsLimited)
+            {
+                message.WriteInteger(item.LimitedEditionStack);
+                message.WriteInteger(item.LimitedEditionStack - item.LimitedEditionSells);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(item.Badge))
+        {
+            message.WriteString("b");
+            message.WriteString(item.Badge);
+        }
+
+        message.WriteInteger(isPremium ? 2 : 0); //club_level
+        message.WriteBoolean(ItemUtility.CanSelectAmount(item));
+
+        message.WriteBoolean(false);// TODO: Figure out
+        message.WriteString("");//previewImage -> e.g; catalogue/pet_lion.png
+    }
+
+    public static void GenerateBuilderOfferData(CatalogBuildersItem item, bool isPremium, ServerPacket message)
+    {
+        message.WriteInteger(item.Id);
+        message.WriteString(item.Name);
+        message.WriteBoolean(false);//IsRentable
+        message.WriteInteger(item.CostCredits);
+
+        if (item.CostWibboPoints > 0)
+        {
+            message.WriteInteger(item.CostWibboPoints);
+            message.WriteInteger(105);
+        }
+        else if (item.CostLimitCoins > 0)
+        {
+            message.WriteInteger(item.CostLimitCoins);
+            message.WriteInteger(55);
+        }
+        else
+        {
+            message.WriteInteger(item.CostDuckets);
+            message.WriteInteger(0);
+        }
+
+        message.WriteBoolean(false); // can gif?
+
+        message.WriteInteger(string.IsNullOrEmpty(item.Badge) || item.Data.Type == ItemType.B ? 1 : 2);
+
+        if (item.Data.Type != ItemType.B)
+        {
+            message.WriteString(item.Data.Type.ToString());
+            message.WriteInteger(item.Data.SpriteId);
+            if (item.Data.InteractionType is InteractionType.WALLPAPER or InteractionType.FLOOR or InteractionType.LANDSCAPE)
+            {
+                message.WriteString(item.Name.Split('_')[2]);
+            }
+            else if (item.Data.InteractionType == InteractionType.BOT)//Bots
+            {
+                if (!CatalogManager.TryGetBot(item.ItemId, out var catalogBot))
+                {
+                    message.WriteString("hd-180-7.ea-1406-62.ch-210-1321.hr-831-49.ca-1813-62.sh-295-1321.lg-285-92");
+                }
+                else
+                {
+                    message.WriteString(catalogBot.Figure);
+                }
+            }
+            else
+            {
+                message.WriteString("");
+            }
+            message.WriteInteger(item.Amount);
+            message.WriteBoolean(item.IsLimited); // IsLimited
+            if (item.IsLimited)
+            {
+                message.WriteInteger(item.LimitedEditionStack);
+                message.WriteInteger(item.LimitedEditionStack - item.LimitedEditionSells);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(item.Badge))
+        {
+            message.WriteString("b");
+            message.WriteString(item.Badge);
+        }
+
+        message.WriteInteger(isPremium ? 2 : 0); //club_level
+        message.WriteBoolean(false); //can select amount?
+
+        message.WriteBoolean(false);// TODO: Figure out
+        message.WriteString("");//previewImage -> e.g; catalogue/pet_lion.png
+    }
+}

@@ -1,0 +1,39 @@
+namespace WibboEmulator.Games.Chats.Commands.User.Several;
+
+using Effects;
+using GameClients;
+using Rooms;
+
+internal sealed class Enable : IChatCommand
+{
+    public void Execute(GameClient session, Room room, RoomUser userRoom, string[] parameters)
+    {
+        if (parameters.Length != 2)
+        {
+            return;
+        }
+
+        if (!int.TryParse(parameters[1], out var numEnable))
+        {
+            return;
+        }
+
+        if (!EffectManager.HasEffect(numEnable, session.User.HasPermission("god")))
+        {
+            return;
+        }
+
+        /*if (userRoom.Team != TeamType.None || userRoom.InGame || room.IsGameMode)
+        {
+            return;
+        }*/
+
+        var currentEnable = userRoom.CurrentEffect;
+        if (currentEnable is 28 or 29 or 30 or 184)
+        {
+            return;
+        }
+
+        userRoom.ApplyEffect(numEnable);
+    }
+}

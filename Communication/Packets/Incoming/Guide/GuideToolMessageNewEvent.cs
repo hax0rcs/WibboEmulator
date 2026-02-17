@@ -1,0 +1,28 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Guide;
+
+using Games.GameClients;
+using Outgoing.Help;
+
+internal sealed class GuideToolMessageNewEvent : IPacketEvent
+{
+    public double Delay => 250;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        var message = packet.PopString();
+
+        var requester = GameClientManager.GetClientByUserID(session.User.GuideOtherUserId);
+        if (requester == null)
+        {
+            return;
+        }
+
+        if (session.User.CheckChatMessage(message, "<GUIDEMESSAGE>"))
+        {
+            return;
+        }
+
+        requester.SendPacket(new OnGuideSessionMsgComposer(message, session.User.Id));
+        session.SendPacket(new OnGuideSessionMsgComposer(message, session.User.Id));
+    }
+}

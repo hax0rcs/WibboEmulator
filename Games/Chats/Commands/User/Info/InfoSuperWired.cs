@@ -1,0 +1,15 @@
+namespace WibboEmulator.Games.Chats.Commands.User.Info;
+
+using Communication.Packets.Outgoing.Notifications;
+using GameClients;
+using Rooms;
+
+internal sealed class InfoSuperWired : IChatCommand
+{
+    public void Execute(GameClient session, Room room, RoomUser userRoom, string[] parameters)
+    {
+        session.SendPacket(new InClientLinkComposer("habbopages/infosuperwired"));
+
+        return;
+    }
+}

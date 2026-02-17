@@ -1,0 +1,72 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Marketplace;
+
+using Database;
+using Database.Daos.Catalog;
+using Games.Catalogs.Marketplace;
+using Games.GameClients;
+using Outgoing.MarketPlace;
+
+internal sealed class GetOffersEvent : IPacketEvent
+{
+    public double Delay => 0;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        var minCost = packet.PopInt();
+        var maxCost = packet.PopInt();
+        var searchQuery = packet.PopString();
+        var filterMode = packet.PopInt();
+
+        using var dbClient = DatabaseManager.Connection;
+
+        var offerList = CatalogMarketplaceOfferDao.GetAll(dbClient, searchQuery, minCost, maxCost, filterMode);
+
+        MarketplaceManager.MarketItems.Clear();
+        MarketplaceManager.MarketItemKeys.Clear();
+        if (offerList.Count != 0)
+        {
+            foreach (var offer in offerList)
+            {
+                if (!MarketplaceManager.MarketItemKeys.Contains(offer.OfferId))
+                {
+                    MarketplaceManager.MarketItemKeys.Add(offer.OfferId);
+                    MarketplaceManager.MarketItems.Add(new MarketOffer(offer.OfferId, offer.SpriteId, offer.TotalPrice, offer.ItemType, offer.LimitedNumber, offer.LimitedStack));
+                }
+            }
+        }
+
+        var dictionary = new Dictionary<int, MarketOffer>();
+        var dictionary2 = new Dictionary<int, int>();
+
+        foreach (var item in MarketplaceManager.MarketItems)
+        {
+            if (dictionary.TryGetValue(item.SpriteId, out var spriteOffer))
+            {
+                if (item.LimitedNumber > 0)
+                {
+                    _ = dictionary.TryAdd(item.OfferID, item);
+                    _ = dictionary2.TryAdd(item.OfferID, 1);
+                }
+                else
+                {
+                    if (spriteOffer.TotalPrice > item.TotalPrice)
+                    {
+                        _ = dictionary.Remove(item.SpriteId);
+                        dictionary.Add(item.SpriteId, item);
+                    }
+
+                    var num = dictionary2[item.SpriteId];
+                    _ = dictionary2.Remove(item.SpriteId);
+                    dictionary2.Add(item.SpriteId, num + 1);
+                }
+            }
+            else
+            {
+                _ = dictionary.TryAdd(item.SpriteId, item);
+                _ = dictionary2.TryAdd(item.SpriteId, 1);
+            }
+        }
+
+        session.SendPacket(new MarketPlaceOffersComposer(dictionary, dictionary2));
+    }
+}

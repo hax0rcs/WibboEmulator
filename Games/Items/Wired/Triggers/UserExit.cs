@@ -1,0 +1,35 @@
+namespace WibboEmulator.Games.Items.Wired.Triggers;
+
+using System.Data;
+using Bases;
+using Interfaces;
+using Rooms;
+
+public class UserExit : WiredTriggerBase, IWired
+{
+    public UserExit(Item item, Room room) : base(item, room, (int)WiredTriggerType.COLLISION) => this.Room.RoomUserManager.OnUserExit += this.OnUserExit;
+
+    private void OnUserExit(object sender, EventArgs e)
+    {
+        if (sender is null or not RoomUser)
+        {
+            return;
+        }
+
+        this.Room.WiredHandler.ExecutePile(this.Item.Coordinate, (RoomUser)sender, null);
+    }
+    public override void Dispose()
+    {
+        this.Room.RoomUserManager.OnUserExit -= this.OnUserExit;
+
+        base.Dispose();
+    }
+
+    public void SaveToDatabase(IDbConnection dbClient)
+    {
+    }
+
+    public void LoadFromDatabase(string wiredTriggerData, string wiredTriggerData2, string wiredTriggersItem, bool wiredAllUserTriggerable, int wiredDelay)
+    {
+    }
+}

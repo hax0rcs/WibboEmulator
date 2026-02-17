@@ -1,0 +1,16 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Misc;
+
+using Games.GameClients;
+
+internal sealed class SetFriendBarStateEvent : IPacketEvent
+{
+    public double Delay => 0;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        if (session == null || session.User == null)
+        {
+            return;
+        }
+    }
+}

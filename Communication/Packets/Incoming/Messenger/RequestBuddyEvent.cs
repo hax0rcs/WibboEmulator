@@ -1,0 +1,21 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Messenger;
+
+using Games.GameClients;
+using Games.Quests;
+
+internal sealed class RequestBuddyEvent : IPacketEvent
+{
+    public double Delay => 0;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        var userName = packet.PopString(16);
+
+        if (session.User.Messenger == null || !session.User.Messenger.RequestBuddy(userName))
+        {
+            return;
+        }
+
+        QuestManager.ProgressUserQuest(session, QuestType.SocialFriend, 0);
+    }
+}

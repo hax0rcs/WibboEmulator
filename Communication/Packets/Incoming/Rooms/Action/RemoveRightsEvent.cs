@@ -1,0 +1,72 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Rooms.Action;
+
+using Database;
+using Database.Daos.Room;
+using Games.GameClients;
+using Games.Rooms;
+using Outgoing.Rooms.Permissions;
+using Outgoing.Rooms.Settings;
+
+internal sealed class RemoveRightsEvent : IPacketEvent
+{
+    public double Delay => 250;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        if (session.User == null)
+        {
+            return;
+        }
+
+        if (!RoomManager.TryGetRoom(session.User.RoomId, out var room))
+        {
+            return;
+        }
+
+        if (!room.CheckRights(session, true))
+        {
+            return;
+        }
+
+        var userIds = new List<int>();
+        var amount = packet.PopInt();
+        for (var index = 0; index < amount; index++)
+        {
+            var userId = packet.PopInt();
+            if (room.UsersWithRights.Contains(userId))
+            {
+                _ = room.UsersWithRights.Remove(userId);
+            }
+
+            if (!userIds.Contains(userId))
+            {
+                userIds.Add(userId);
+            }
+
+            var roomUserByUserId = room.RoomUserManager.GetRoomUserByUserId(userId);
+            if (roomUserByUserId != null && !roomUserByUserId.IsBot)
+            {
+                roomUserByUserId.Client?.SendPacket(new YouAreControllerComposer(0));
+
+                roomUserByUserId.RemoveStatus("flatctrl");
+                roomUserByUserId.SetStatus("flatctrl", "0");
+                roomUserByUserId.UpdateNeeded = true;
+            }
+
+            session.SendPacket(new FlatControllerRemovedMessageComposer(room.Id, userId));
+
+            if (room.UsersWithRights.Count <= 0)
+            {
+                session.SendPacket(new RoomRightsListComposer(room));
+            }
+            else
+            {
+                _ = room.UsersWithRights.Contains(userId);
+                session.SendPacket(new RoomRightsListComposer(room));
+            }
+        }
+
+        using var dbClient = DatabaseManager.Connection;
+        RoomRightDao.DeleteAll(dbClient, room.Id, userIds);
+    }
+}

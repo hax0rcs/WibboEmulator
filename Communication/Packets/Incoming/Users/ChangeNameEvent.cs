@@ -1,0 +1,93 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Users;
+
+using Core.Language;
+using Database;
+using Database.Daos.Log;
+using Database.Daos.Room;
+using Database.Daos.User;
+using Games.GameClients;
+using Games.Rooms;
+using Games.Users;
+using Outgoing.Handshake;
+using Outgoing.Navigator;
+using Outgoing.Rooms.Engine;
+using Outgoing.Users;
+
+internal sealed class ChangeNameEvent : IPacketEvent
+{
+    public double Delay => 5000;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        if (session == null || session.User == null)
+        {
+            return;
+        }
+
+        if (!RoomManager.TryGetRoom(session.User.RoomId, out var room))
+        {
+            return;
+        }
+
+        var roomUser = room.RoomUserManager.GetRoomUserByName(session.User.Username);
+        if (roomUser == null)
+        {
+            return;
+        }
+
+        var newUsername = packet.PopString(16);
+
+        if (!session.User.CanChangeName && session.User.Rank == 1)
+        {
+            session.SendNotification(LanguageManager.TryGetValue("notif.changename.error.1", session.Language));
+            return;
+        }
+
+        if (newUsername == session.User.Username)
+        {
+            session.SendPacket(new UpdateUsernameComposer(session.User.Username));
+            return;
+        }
+
+        if (UserManager.UsernameAvailable(newUsername) != 1)
+        {
+            session.SendNotification(LanguageManager.TryGetValue("notif.changename.error.2", session.Language));
+            return;
+        }
+
+        using (var dbClient = DatabaseManager.Connection)
+        {
+            RoomDao.UpdateOwner(dbClient, newUsername, session.User.Username);
+
+            UserDao.UpdateName(dbClient, session.User.Id, newUsername);
+
+            LogFlagmeDao.Insert(dbClient, session.User.Id, session.User.Username, newUsername);
+        }
+
+        _ = GameClientManager.UpdateClientUsername(session.ConnectionID, session.User.Username, newUsername);
+        _ = room.RoomUserManager.UpdateClientUsername(roomUser, session.User.Username, newUsername);
+        session.User.Username = newUsername;
+        session.User.CanChangeName = false;
+
+        session.SendPacket(new UpdateUsernameComposer(newUsername));
+        session.SendPacket(new UserObjectComposer(session.User));
+
+        foreach (var roomId in session.User.UsersRooms)
+        {
+            if (RoomManager.TryGetRoom(roomId, out var roomOwner))
+            {
+                roomOwner.RoomData.OwnerName = newUsername;
+            }
+
+            RoomManager.RoomDataRemove(roomId);
+        }
+
+        room.SendPacket(new UserNameChangeComposer(newUsername, roomUser.VirtualId));
+
+        if (session.User.Id == room.RoomData.OwnerId)
+        {
+            room.RoomData.OwnerName = newUsername;
+            room.SendPacket(new RoomInfoUpdatedComposer(room.Id));
+        }
+    }
+}

@@ -1,0 +1,70 @@
+namespace WibboEmulator.Communication.Packets.Outgoing.Rooms.Engine;
+
+using Core.Settings;
+using Games.Items;
+
+internal sealed class ObjectAddComposer : ServerPacket
+{
+    public ObjectAddComposer(Item item, string username, int userId)
+        : base(ServerPacketHeader.FURNITURE_FLOOR_ADD)
+    {
+        this.WriteInteger(item.Id);
+        this.WriteInteger(item.ItemData.SpriteId);
+        this.WriteInteger(item.X);
+        this.WriteInteger(item.Y);
+        this.WriteInteger(item.Rotation);
+        this.WriteString(string.Format(/*lang=json*/ "{0:0.00}", item.Z));
+        this.WriteString(item.Data.Height.ToString());
+        this.WriteInteger(item.Extra);
+
+        ItemBehaviourUtility.GenerateExtradata(item, this);
+
+        this.WriteInteger(-1);
+        this.WriteInteger(1);
+        this.WriteInteger(userId);
+        this.WriteString(username);
+    }
+
+    public ObjectAddComposer(ItemTemp item)
+        : base(ServerPacketHeader.FURNITURE_FLOOR_ADD)
+    {
+        this.WriteInteger(item.Id);
+        this.WriteInteger(item.SpriteId);
+        this.WriteInteger(item.X);
+        this.WriteInteger(item.Y);
+        this.WriteInteger(2);
+        this.WriteString(string.Format(/*lang=json*/ "{0:0.00}", item.Z));
+        this.WriteString("");
+
+        if (item.InteractionType == InteractionTypeTemp.RpItem)
+        {
+            this.WriteInteger(0);
+            this.WriteInteger(1);
+
+            this.WriteInteger(5);
+
+            this.WriteString("state");
+            this.WriteString("0");
+            this.WriteString("imageUrl");
+            this.WriteString("https://" + SettingsManager.GetData<string>("cdn.url") + "/items/" + item.ExtraData + ".png");
+            this.WriteString("offsetX");
+            this.WriteString("-20");
+            this.WriteString("offsetY");
+            this.WriteString("10");
+            this.WriteString("offsetZ");
+            this.WriteString("10002");
+        }
+        else
+        {
+            this.WriteInteger(1);
+            this.WriteInteger(0);
+            this.WriteString(item.ExtraData); //ExtraData
+        }
+
+
+        this.WriteInteger(-1); // to-do: check
+        this.WriteInteger(1);
+        this.WriteInteger(item.VirtualUserId);
+        this.WriteString("");
+    }
+}

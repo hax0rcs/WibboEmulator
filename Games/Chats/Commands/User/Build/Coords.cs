@@ -1,0 +1,9 @@
+namespace WibboEmulator.Games.Chats.Commands.User.Build;
+
+using GameClients;
+using Rooms;
+
+internal sealed class Coords : IChatCommand
+{
+    public void Execute(GameClient session, Room room, RoomUser userRoom, string[] parameters) => userRoom.SendWhisperChat("X: " + userRoom.X + " - Y: " + userRoom.Y + " - Z: " + userRoom.Z + " - Rot: " + userRoom.RotBody);
+}

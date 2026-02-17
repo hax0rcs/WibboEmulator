@@ -1,0 +1,18 @@
+namespace WibboEmulator.Communication.Packets.Incoming.Users;
+
+using Games.GameClients;
+
+internal sealed class ScrGetUserInfoMessageEvent : IPacketEvent
+{
+    public double Delay => 0;
+
+    public void Parse(GameClient session, ClientPacket packet)
+    {
+        if (session == null || session.User == null)
+        {
+            return;
+        }
+
+        session.User.Premium.SendPackets(true);
+    }
+}

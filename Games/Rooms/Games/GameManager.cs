@@ -1,0 +1,354 @@
+namespace WibboEmulator.Games.Rooms.Games;
+
+using Events;
+using Items;
+using Teams;
+
+public class GameManager(Room room)
+{
+    public int[] TeamPoints { get; set; } = new int[5];
+
+    private Dictionary<int, Item> _redTeamItems = [];
+    private Dictionary<int, Item> _blueTeamItems = [];
+    private Dictionary<int, Item> _greenTeamItems = [];
+    private Dictionary<int, Item> _yellowTeamItems = [];
+
+    public int[] Points
+    {
+        get => this.TeamPoints;
+        set => this.TeamPoints = value;
+    }
+
+    public event EventHandler<TeamScoreChangedEventArgs> OnScoreChanged;
+    public event EventHandler OnGameStart;
+    public event EventHandler OnGameEnd;
+
+    public Dictionary<int, Item> GetItems(TeamType team) => team switch
+    {
+        TeamType.Red => this._redTeamItems,
+        TeamType.Green => this._greenTeamItems,
+        TeamType.Blue => this._blueTeamItems,
+        TeamType.Yellow => this._yellowTeamItems,
+        _ => [],
+    };
+
+    public TeamType WinningTeam
+    {
+        get
+        {
+            var nbTeam = 0;
+            var maxPoints = 0;
+            for (var i = 1; i < 5; ++i)
+            {
+                if (this.TeamPoints[i] == maxPoints)
+                {
+                    nbTeam = 0;
+                }
+
+                if (this.TeamPoints[i] > maxPoints && this.TeamPoints[i] > 0)
+                {
+                    maxPoints = this.TeamPoints[i];
+                    nbTeam = i;
+                }
+            }
+            return (TeamType)nbTeam;
+        }
+    }
+
+    public void AddPointToTeam(TeamType team, RoomUser user) => this.AddPointToTeam(team, 1, user);
+
+    public void AddPointToTeam(TeamType team, int points, RoomUser user)
+    {
+        var totalPoints = this.TeamPoints[(int)team] += points;
+        if (totalPoints < 0)
+        {
+            totalPoints = 0;
+        }
+
+        if (totalPoints > 999)
+        {
+            totalPoints = 999;
+        }
+
+        this.TeamPoints[(int)team] = totalPoints;
+        this.OnScoreChanged?.Invoke(null, new TeamScoreChangedEventArgs(totalPoints, team, user));
+
+        foreach (var roomItem in this.GetFurniItems(team).Values)
+        {
+            if (IsScoreItem(roomItem.ItemData.InteractionType))
+            {
+                roomItem.ExtraData = this.TeamPoints[(int)team].ToString();
+                roomItem.UpdateState();
+            }
+        }
+    }
+
+    public void Reset()
+    {
+        this.AddPointToTeam(TeamType.Blue, this.GetScoreForTeam(TeamType.Blue) * -1, null);
+        this.AddPointToTeam(TeamType.Green, this.GetScoreForTeam(TeamType.Green) * -1, null);
+        this.AddPointToTeam(TeamType.Red, this.GetScoreForTeam(TeamType.Red) * -1, null);
+        this.AddPointToTeam(TeamType.Yellow, this.GetScoreForTeam(TeamType.Yellow) * -1, null);
+    }
+
+    public int GetTeamPosition(TeamType team)
+    {
+        var teamPointsList = new List<(TeamType team, int points)>();
+        for (TeamType t = TeamType.Red; t <= TeamType.Yellow; t++)
+        {
+            teamPointsList.Add((t, TeamPoints[(int)t]));
+        }
+
+        teamPointsList.Sort((x, y) => y.points.CompareTo(x.points));
+
+        for (int i = 0; i < teamPointsList.Count; i++)
+        {
+            if (teamPointsList[i].team == team)
+            {
+                return i + 1;
+            }
+        }
+
+        return 0;
+    }
+
+    public TeamType GetTeamInPosition(int position)
+    {
+        var teamPointsList = new List<(TeamType team, int points)>();
+        for (TeamType t = TeamType.Red; t <= TeamType.Yellow; t++)
+        {
+            teamPointsList.Add((t, TeamPoints[(int)t]));
+        }
+
+        teamPointsList.Sort((x, y) => y.points.CompareTo(x.points));
+
+        if (position > 0 && position <= teamPointsList.Count)
+        {
+            return teamPointsList[position - 1].team;
+        }
+
+        return TeamType.None;
+    }
+
+    public int GetScoreForTeam(TeamType team) => this.TeamPoints[(int)team];
+
+    private Dictionary<int, Item> GetFurniItems(TeamType team) => team switch
+    {
+        TeamType.Red => this._redTeamItems,
+        TeamType.Green => this._greenTeamItems,
+        TeamType.Blue => this._blueTeamItems,
+        TeamType.Yellow => this._yellowTeamItems,
+        _ => [],
+    };
+
+    private static bool IsScoreItem(InteractionType type) => type switch
+    {
+        InteractionType.BANZAI_SCORE_BLUE or InteractionType.BANZAI_SCORE_RED or InteractionType.BANZAI_SCORE_YELLOW or InteractionType.BANZAI_SCORE_GREEN or InteractionType.FREEZE_BLUE_COUNTER or InteractionType.FREEZE_GREEN_COUNTER or InteractionType.FREEZE_RED_COUNTER or InteractionType.FREEZE_YELLOW_COUNTER => true,
+        _ => false,
+    };
+
+    public void AddFurnitureToTeam(Item item, TeamType team)
+    {
+        switch (team)
+        {
+            case TeamType.Red:
+                _ = this._redTeamItems.TryAdd(item.Id, item);
+                break;
+            case TeamType.Green:
+                _ = this._greenTeamItems.TryAdd(item.Id, item);
+                break;
+            case TeamType.Blue:
+                _ = this._blueTeamItems.TryAdd(item.Id, item);
+                break;
+            case TeamType.Yellow:
+                _ = this._yellowTeamItems.TryAdd(item.Id, item);
+                break;
+        }
+    }
+
+    public void RemoveFurnitureFromTeam(Item item, TeamType team)
+    {
+        switch (team)
+        {
+            case TeamType.Red:
+                _ = this._redTeamItems.Remove(item.Id);
+                break;
+            case TeamType.Green:
+                _ = this._greenTeamItems.Remove(item.Id);
+                break;
+            case TeamType.Blue:
+                _ = this._blueTeamItems.Remove(item.Id);
+                break;
+            case TeamType.Yellow:
+                _ = this._yellowTeamItems.Remove(item.Id);
+                break;
+        }
+    }
+
+    public void UnlockGates()
+    {
+        foreach (var roomItem in this._redTeamItems.Values)
+        {
+            UnlockGate(roomItem);
+        }
+
+        foreach (var roomItem in this._greenTeamItems.Values)
+        {
+            UnlockGate(roomItem);
+        }
+
+        foreach (var roomItem in this._blueTeamItems.Values)
+        {
+            UnlockGate(roomItem);
+        }
+
+        foreach (var roomItem in this._yellowTeamItems.Values)
+        {
+            UnlockGate(roomItem);
+        }
+    }
+
+    private static void LockGate(Item item)
+    {
+        switch (item.ItemData.InteractionType)
+        {
+            case InteractionType.FREEZE_BLUE_GATE:
+            case InteractionType.FREEZE_GREEN_GATE:
+            case InteractionType.FREEZE_RED_GATE:
+            case InteractionType.FREEZE_YELLOW_GATE:
+            case InteractionType.BANZAI_GATE_BLUE:
+            case InteractionType.BANZAI_GATE_GREEN:
+            case InteractionType.BANZAI_GATE_RED:
+            case InteractionType.BANZAI_GATE_YELLOW:
+                //this.room.GetGameMap().UpdateGameMap(item, false);
+                break;
+        }
+    }
+
+    public void UpdateGatesTeamCounts()
+    {
+        foreach (var roomItem in this._redTeamItems.Values)
+        {
+            this.UpdateGateTeamCount(roomItem);
+        }
+
+        foreach (var roomItem in this._greenTeamItems.Values)
+        {
+            this.UpdateGateTeamCount(roomItem);
+        }
+
+        foreach (var roomItem in this._blueTeamItems.Values)
+        {
+            this.UpdateGateTeamCount(roomItem);
+        }
+
+        foreach (var roomItem in this._yellowTeamItems.Values)
+        {
+            this.UpdateGateTeamCount(roomItem);
+        }
+    }
+
+    private void UpdateGateTeamCount(Item item)
+    {
+        switch (item.ItemData.InteractionType)
+        {
+            case InteractionType.BANZAI_GATE_BLUE:
+            case InteractionType.FREEZE_BLUE_GATE:
+                item.ExtraData = this.Room.TeamManager.BlueTeam.Count.ToString();
+                item.UpdateState();
+                break;
+            case InteractionType.BANZAI_GATE_RED:
+            case InteractionType.FREEZE_RED_GATE:
+                item.ExtraData = this.Room.TeamManager.RedTeam.Count.ToString();
+                item.UpdateState();
+                break;
+            case InteractionType.BANZAI_GATE_GREEN:
+            case InteractionType.FREEZE_GREEN_GATE:
+                item.ExtraData = this.Room.TeamManager.GreenTeam.Count.ToString();
+                item.UpdateState();
+                break;
+            case InteractionType.BANZAI_GATE_YELLOW:
+            case InteractionType.FREEZE_YELLOW_GATE:
+                item.ExtraData = this.Room.TeamManager.YellowTeam.Count.ToString();
+                item.UpdateState();
+                break;
+        }
+    }
+
+    private static void UnlockGate(Item item)
+    {
+        switch (item.ItemData.InteractionType)
+        {
+            case InteractionType.BANZAI_GATE_BLUE:
+            case InteractionType.FREEZE_BLUE_GATE:
+            case InteractionType.FREEZE_GREEN_GATE:
+            case InteractionType.BANZAI_GATE_GREEN:
+            case InteractionType.FREEZE_RED_GATE:
+            case InteractionType.BANZAI_GATE_RED:
+            case InteractionType.FREEZE_YELLOW_GATE:
+            case InteractionType.BANZAI_GATE_YELLOW:
+                //this.room.GetGameMap().UpdateGameMap(item, true);
+                break;
+        }
+    }
+
+    public void LockGates()
+    {
+        foreach (var roomItem in this._redTeamItems.Values)
+        {
+            LockGate(roomItem);
+        }
+
+        foreach (var roomItem in this._greenTeamItems.Values)
+        {
+            LockGate(roomItem);
+        }
+
+        foreach (var roomItem in this._blueTeamItems.Values)
+        {
+            LockGate(roomItem);
+        }
+
+        foreach (var roomItem in this._yellowTeamItems.Values)
+        {
+            LockGate(roomItem);
+        }
+    }
+
+    public void StopGame()
+    {
+        this.Room.BattleBanzai.BanzaiEnd();
+        this.Room.Freeze.StopGame();
+
+        this.OnGameEnd?.Invoke(this, new());
+    }
+
+    public void StartGame()
+    {
+        this.Room.BattleBanzai.BanzaiStart();
+        this.Room.Freeze.StartGame();
+
+        this.OnGameStart?.Invoke(this, new());
+
+        this.Room.LastTimerReset = DateTime.Now;
+    }
+
+    public Room Room { get; private set; } = room;
+
+    public void Destroy()
+    {
+        this._redTeamItems.Clear();
+        this._blueTeamItems.Clear();
+        this._greenTeamItems.Clear();
+        this._yellowTeamItems.Clear();
+        this.TeamPoints = null;
+        this.OnScoreChanged = null;
+        this.OnGameStart = null;
+        this.OnGameEnd = null;
+        this._redTeamItems = null;
+        this._blueTeamItems = null;
+        this._greenTeamItems = null;
+        this._yellowTeamItems = null;
+        this.Room = null;
+    }
+}

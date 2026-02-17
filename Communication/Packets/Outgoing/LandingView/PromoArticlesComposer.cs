@@ -1,0 +1,22 @@
+namespace WibboEmulator.Communication.Packets.Outgoing.LandingView;
+
+using Games.LandingView;
+
+internal sealed class PromoArticlesComposer : ServerPacket
+{
+    public PromoArticlesComposer(List<Promotion> hotelViewPromosIndexers)
+        : base(ServerPacketHeader.DESKTOP_NEWS)
+    {
+        this.WriteInteger(hotelViewPromosIndexers.Count);
+        foreach (var promo in hotelViewPromosIndexers)
+        {
+            this.WriteInteger(promo.Index);
+            this.WriteString(promo.Header);
+            this.WriteString(promo.Body);
+            this.WriteString(promo.Button);
+            this.WriteInteger(promo.InGamePromo ? 1 : 0);
+            this.WriteString(promo.SpecialAction);
+            this.WriteString(promo.Image);
+        }
+    }
+}
