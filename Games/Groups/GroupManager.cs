@@ -84,7 +84,7 @@ public static class GroupManager
 
             group = new Group(
                     guild.Id, guild.Name, guild.Desc, guild.Badge, guild.RoomId, guild.OwnerId,
-                    guild.Created, guild.State, guild.Colour1, guild.Colour2, guild.AdminDeco, guild.HasForum);
+                    guild.Created, guild.State, guild.Colour1, guild.Colour2, guild.AdminDeco, guild.HasForum, guild.HasChat);
 
             _ = Groups.TryAdd(group.Id, group);
 
@@ -94,7 +94,7 @@ public static class GroupManager
 
     public static bool TryCreateGroup(User user, string name, string description, int roomId, string badge, int colour1, int colour2, out Group group)
     {
-        group = new Group(0, name, description, badge, roomId, user.Id, WibboEnvironment.GetUnixTimestamp(), 0, colour1, colour2, false, false);
+        group = new Group(0, name, description, badge, roomId, user.Id, WibboEnvironment.GetUnixTimestamp(), 0, colour1, colour2, false, false, false);
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(badge))
         {
             return false;
@@ -174,7 +174,40 @@ public static class GroupManager
         return groups;
     }
 
+    public static List<Group> GetGroupsChatForUser(List<int> groupIds)
+    {
+        var groups = new List<Group>();
 
+        foreach (var id in groupIds)
+        {
+            if (TryGetGroup(id, out var group))
+            {
+                if (!group.HasChat)
+                {
+                    continue;
+                }
+
+                groups.Add(group);
+            }
+        }
+
+        return groups;
+    }
+
+    public static Group GetGroupsChatForUser(int groupId)
+    {
+        if (TryGetGroup(groupId, out var chatGroup))
+        {
+            if (chatGroup.HasChat)
+            {
+                return chatGroup;
+            }
+
+            return null;
+        }
+
+        return null;
+    }
     public static ICollection<GroupBadgeParts> BadgeBases => Bases;
 
     public static ICollection<GroupBadgeParts> BadgeSymbols => Symbols;

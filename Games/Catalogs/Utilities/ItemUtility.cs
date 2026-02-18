@@ -119,6 +119,11 @@ public static class ItemUtility
                 extraData = "0;" + group.Id;
                 break;
 
+            case InteractionType.GUILD_CHAT:
+            {
+                break;
+            }
+
             case InteractionType.PET:
                 if (string.IsNullOrEmpty(extraData) || !extraData.Contains('\n'))
                 {

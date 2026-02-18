@@ -8,6 +8,7 @@ using Database.Daos.Messenger;
 using Database.Daos.User;
 using GameClients;
 using Utilities;
+using WibboEmulator.Games.Groups;
 
 public class MessengerComponent(User user) : IDisposable
 {
@@ -144,6 +145,22 @@ public class MessengerComponent(User user) : IDisposable
         }
 
         client.SendPacket(new FriendListUpdateComposer(friend));
+    }
+
+    public void UpdateGroupChat(int groupId, bool notification)
+    {
+        var groupChat = GroupManager.GetGroupsChatForUser(groupId);
+        if (groupChat == null)
+        {
+            return;
+        }
+
+        if (!notification)
+        {
+            return;
+        }
+
+        this.Client.SendPacket(FriendListUpdateComposer.WriteGroupChat(groupChat, 1));
     }
 
     public void HandleAllRequests()
@@ -326,6 +343,27 @@ public class MessengerComponent(User user) : IDisposable
         }
 
         this.Requests.Add(friendID, new MessengerRequest(user.Id, friendID, UserManager.GetUsernameById(friendID)));
+    }
+
+    public void SendInstantGroupMessage(int groupId, List<int> toIds, string message)
+    {
+        foreach (var toId in toIds)
+        {
+            var userClient = GameClientManager.GetClientByUserID(toId);
+            if (userClient == null)
+            {
+                continue;
+            }
+
+            if (userClient == this.Client)
+            {
+                continue;
+            }
+
+            userClient.SendPacket(NewConsoleComposer.WriteMessageGroupChat(-groupId, message, 0, this.Client.User.Username, this.Client.User.Look, this.Client.User.Id));
+        }
+
+        return;
     }
 
     public void SendInstantMessage(int toId, string message)

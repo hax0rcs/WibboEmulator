@@ -13,6 +13,10 @@ internal sealed class GuildDao
         "UPDATE guild SET colour1 = @Colour1, colour2 = @Colour2 WHERE id = @GroupId LIMIT 1",
         new { Colour1 = colour1, Colour2 = colour2, GroupId = groupId });
 
+    internal static void UpdateHasChat(IDbConnection dbClient, int groupId, bool hasChat) => dbClient.Execute(
+        "UPDATE guild SET has_chat = @HasChat WHERE id = @GroupId LIMIT 1",
+        new { HasChat = hasChat, GroupId = groupId });
+
     internal static void UpdateNameAndDesc(IDbConnection dbClient, int groupId, string name, string desc) => dbClient.Execute(
         "UPDATE guild SET name = @Name, `desc` = @Desc WHERE id = @GroupId LIMIT 1",
         new { Name = name, Desc = desc, GroupId = groupId });
@@ -26,7 +30,7 @@ internal sealed class GuildDao
         new { GroupId = groupId });
 
     internal static GuildEntity GetOne(IDbConnection dbClient, int groupId) => dbClient.QuerySingleOrDefault<GuildEntity>(
-        @"SELECT `id`, `name`, `desc`, `badge`, `owner_id`, `created`, `room_id`, `state`, `colour1`, `colour2`, `admindeco`, `has_forum`
+        @"SELECT `id`, `name`, `desc`, `badge`, `owner_id`, `created`, `room_id`, `state`, `colour1`, `colour2`, `admindeco`, `has_forum`, `has_chat`
         FROM `guild`
         WHERE `id` = @Id LIMIT 1",
         new { Id = groupId });
@@ -52,4 +56,5 @@ public class GuildEntity
     public int Colour2 { get; set; }
     public bool AdminDeco { get; set; }
     public bool HasForum { get; set; }
+    public bool HasChat { get; set; }
 }

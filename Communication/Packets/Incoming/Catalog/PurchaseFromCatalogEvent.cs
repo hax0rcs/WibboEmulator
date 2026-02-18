@@ -20,6 +20,9 @@ using Outgoing.Inventory.Furni;
 using Outgoing.Inventory.Pets;
 using Outgoing.Inventory.Purse;
 using Outgoing.Rooms.Notifications;
+using WibboEmulator.Communication.Packets.Outgoing.Messenger;
+using WibboEmulator.Database.Daos.Guild;
+using WibboEmulator.Games.Groups;
 
 internal sealed class PurchaseFromCatalogEvent : IPacketEvent
 {
@@ -193,7 +196,48 @@ internal sealed class PurchaseFromCatalogEvent : IPacketEvent
                             }
                         }
                         break;
+                    case InteractionType.GUILD_CHAT:
+                    {
+                        if (!int.TryParse(extraData, out var groupId))
+                        {
+                            session.SendPacket(new PurchaseErrorComposer());
+                            return;
+                        }
 
+                        _ = GroupManager.TryGetGroup(groupId, out var group);
+                        if (group != null)
+                        {
+                            if (!group.IsMember(session.User.Id))
+                            {
+                                session.SendPacket(new PurchaseErrorComposer());
+                                return;
+                            }
+
+                            if (!group.IsAdmin(session.User.Id))
+                            {
+                                session.SendHugeNotification($"Você deve ser Administrador do Grupo <b>{group.Name}</b> para poder adquirir um Chat á ele.");
+                                session.SendPacket(new PurchaseErrorComposer());
+                                return;
+                            }
+
+                            if (group.HasChat)
+                            {
+                                session.SendHugeNotification($"O Grupo <b>{group.Name}</b> já tem um Chat!");
+                                session.SendPacket(new PurchaseErrorComposer());
+                                return;
+                            }
+
+                            group.HasChat = true;
+                            GuildDao.UpdateHasChat(dbClient, group.Id, true);
+
+                            group.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, 1));
+                            session.SendHugeNotification($"Foi habilitado o Chat de Grupo para <b>{group.Name}</b>. Seu grupo pode sofrer alterações ou impedimentos caso não esteja em conformidade com as regras.</b> ");
+
+                            return;
+                        }
+
+                        break;
+                    }
                     case InteractionType.TELEPORT:
                     case InteractionType.TELEPORT_ARROW:
                         for (var i = 0; i < amountPurchase; i++)

@@ -157,6 +157,7 @@ public class InteractionTypes
         "jmphorse" => InteractionType.HORSE_JUMP,
         "groupfurni" => InteractionType.GUILD_ITEM,
         "groupgate" => InteractionType.GUILD_GATE,
+        "groupchat" => InteractionType.GUILD_CHAT,
         "floor" => InteractionType.FLOOR,
         "wallpaper" => InteractionType.WALLPAPER,
         "landscape" => InteractionType.LANDSCAPE,

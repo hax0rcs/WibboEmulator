@@ -1,6 +1,7 @@
 namespace WibboEmulator.Communication.Packets.Outgoing.Messenger;
 
 using Games.Users.Messenger;
+using WibboEmulator.Games.Groups;
 
 internal sealed class FriendListUpdateComposer : ServerPacket
 {
@@ -43,5 +44,36 @@ internal sealed class FriendListUpdateComposer : ServerPacket
         {
             this.WriteInteger(friendId);
         }
+    }
+
+    public static ServerPacket WriteGroupChat(Group group, int action)
+    {
+        var friendListGroupComposer = new ServerPacket(ServerPacketHeader.MESSENGER_UPDATE);
+
+        friendListGroupComposer.WriteInteger(0);
+        friendListGroupComposer.WriteInteger(1);
+
+        friendListGroupComposer.WriteInteger(action);
+
+        if (group != null)
+        {
+            friendListGroupComposer.WriteInteger(-group.Id);//truque nitro =v
+            friendListGroupComposer.WriteString($"{group.Name} ({group.Id})");
+            friendListGroupComposer.WriteInteger(77); // unknown
+            friendListGroupComposer.WriteBoolean(true);
+            friendListGroupComposer.WriteBoolean(false);
+            friendListGroupComposer.WriteString(group == null ? "" : group.Badge);
+            friendListGroupComposer.WriteInteger(1);
+            friendListGroupComposer.WriteString(string.Empty);
+            friendListGroupComposer.WriteString(string.Empty);
+            friendListGroupComposer.WriteString(string.Empty);
+            friendListGroupComposer.WriteBoolean(false);
+            friendListGroupComposer.WriteBoolean(false);
+            friendListGroupComposer.WriteBoolean(false);
+            friendListGroupComposer.WriteShort(0);
+            friendListGroupComposer.WriteInteger(1);
+        }
+
+        return friendListGroupComposer;
     }
 }

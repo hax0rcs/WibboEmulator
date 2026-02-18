@@ -177,6 +177,7 @@ public enum InteractionType
 
     GUILD_GATE,
     GUILD_ITEM,
+    GUILD_CHAT,
 
     HALLOWEENPOOL,
     ICESKATES,

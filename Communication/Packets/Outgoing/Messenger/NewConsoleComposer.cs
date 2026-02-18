@@ -9,4 +9,17 @@ internal sealed class NewConsoleComposer : ServerPacket
         this.WriteString(message);
         this.WriteInteger(time);
     }
+
+    public static ServerPacket WriteMessageGroupChat(int sender, string message, int time, string username, string look, int userId)
+    {
+
+        var newConsoleComposer = new ServerPacket(ServerPacketHeader.MESSENGER_CHAT);
+
+        newConsoleComposer.WriteInteger(sender);
+        newConsoleComposer.WriteString(message);
+        newConsoleComposer.WriteInteger(time);
+
+        newConsoleComposer.WriteString(username + "/" + look + "/" + userId);
+        return newConsoleComposer;
+    }
 }

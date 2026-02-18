@@ -5,6 +5,7 @@ using Database.Daos.Guild;
 using Games.GameClients;
 using Games.Groups;
 using Outgoing.Groups;
+using WibboEmulator.Communication.Packets.Outgoing.Messenger;
 
 internal sealed class UpdateGroupBadgeEvent : IPacketEvent
 {
@@ -37,6 +38,11 @@ internal sealed class UpdateGroupBadgeEvent : IPacketEvent
         using (var dbClient = DatabaseManager.Connection)
         {
             GuildDao.UpdateBadge(dbClient, group.Id, group.Badge);
+        }
+
+        if (group.HasChat)
+        {
+            group.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, 0));
         }
 
         session.SendPacket(new GroupInfoComposer(group, session));

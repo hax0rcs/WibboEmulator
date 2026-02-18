@@ -41,8 +41,14 @@ internal sealed class JoinGroupEvent : IPacketEvent
         else
         {
             session.User.MyGroups.Add(group.Id);
+
             session.SendPacket(new GroupFurniConfigComposer(GroupManager.GetGroupsForUser(session.User.MyGroups)));
             session.SendPacket(new GroupInfoComposer(group, session));
+
+            if (group.HasChat)
+            {
+                session.User.Messenger.UpdateGroupChat(group.Id, true);
+            }
 
             var room = session.User.Room;
             if (room != null)

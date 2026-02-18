@@ -4,6 +4,7 @@ using Games.GameClients;
 using Games.Groups;
 using Games.Users;
 using Outgoing.Groups;
+using WibboEmulator.Communication.Packets.Outgoing.Messenger;
 
 internal sealed class AcceptGroupMembershipEvent : IPacketEvent
 {
@@ -33,6 +34,11 @@ internal sealed class AcceptGroupMembershipEvent : IPacketEvent
         if (user == null)
         {
             return;
+        }
+
+        if (group.HasChat && user.Client != null)
+        {
+            user.Client.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, 1));
         }
 
         group.HandleRequest(userId, true);

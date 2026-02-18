@@ -17,7 +17,8 @@ internal sealed class MessengerInitEvent : IPacketEvent
         session.User.Messenger.OnStatusChanged();
 
         session.SendPacket(new MessengerInitComposer());
-        session.SendPacket(new BuddyListComposer(session.User.Messenger.Friends));
+        session.SendPacket(new BuddyListComposer(session.User.Messenger.Friends, session.User.MyGroups));
+
         session.User.Messenger.ProcessOfflineMessages();
     }
 }

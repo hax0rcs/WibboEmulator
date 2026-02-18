@@ -6,6 +6,7 @@ using Database.Daos.Log;
 using Games.GameClients;
 using Games.Groups;
 using Games.Rooms;
+using WibboEmulator.Communication.Packets.Outgoing.Messenger;
 
 internal sealed class DeleteGroupEvent : IPacketEvent
 {
@@ -30,6 +31,11 @@ internal sealed class DeleteGroupEvent : IPacketEvent
         {
             session.SendNotification(LanguageManager.TryGetValue("notif.groupdelete.error.2", session.Language));
             return;
+        }
+
+        if (group.HasChat)
+        {
+            group.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, -1));
         }
 
         GroupManager.DeleteGroup(group.Id);

@@ -44,7 +44,7 @@ public class UserGiveStarEvent : IPacketEvent
         roomUserByUserId.SendWhisperChat($"Você deu 1 Ducket para {roomUserByUserIdTarget.Username}", false);
         roomUserByUserIdTarget.SendWhisperChat($"{roomUserByUserId.Username} te deu 1 Ducket.", false);
 
-        roomUserByUserId.Client.SendPacket(new ActivityPointNotificationComposer(roomUserByUserId.Client.User.WibboPoints, 0, 105));
-        roomUserByUserIdTarget.Client.SendPacket(new ActivityPointNotificationComposer(roomUserByUserIdTarget.Client.User.wibb, 0, 105));
+        roomUserByUserId.Client.SendPacket(new ActivityPointNotificationComposer(roomUserByUserId.Client.User.Duckets, 0, 105));
+        roomUserByUserIdTarget.Client.SendPacket(new ActivityPointNotificationComposer(roomUserByUserIdTarget.Client.User.Duckets, 0, 105));
     }
 }

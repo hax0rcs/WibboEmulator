@@ -2,6 +2,8 @@ namespace WibboEmulator.Games.Groups;
 
 using Database;
 using Database.Daos.Guild;
+using WibboEmulator.Communication.Interfaces;
+using WibboEmulator.Games.GameClients;
 
 public class Group
 {
@@ -18,13 +20,14 @@ public class Group
     public bool ForumEnabled { get; set; }
     public GroupType GroupType { get; set; }
     public bool HasForum { get; set; }
+    public bool HasChat { get; set; }
 
     private readonly List<int> _members;
     private readonly List<int> _requests;
     private readonly List<int> _administrators;
 
     public Group(int id, string name, string description, string badge, int roomId, int owner, int time, int type, int colour1, int colour2,
-        bool adminOnlyDeco, bool hasForum)
+        bool adminOnlyDeco, bool hasForum, bool hasChat)
     {
         this.Id = id;
         this.Name = name;
@@ -36,6 +39,7 @@ public class Group
         this.Colour1 = (colour1 == 0) ? 1 : colour1;
         this.Colour2 = (colour2 == 0) ? 1 : colour2;
         this.HasForum = hasForum;
+        this.HasChat = hasChat;
 
         switch (type)
         {
@@ -221,6 +225,20 @@ public class Group
 
         using var dbClient = DatabaseManager.Connection;
         GuildMembershipDao.Delete(dbClient, this.Id, userId);
+    }
+
+    public void SendPacket(IServerPacket packet, bool checkAdmin = false)
+    {
+        foreach (var groupUser in this.GetAllMembers)
+        {
+            if (checkAdmin && !this.IsAdmin(groupUser))
+            {
+                continue;
+            }
+
+            var client = GameClientManager.GetClientByUserID(groupUser);
+            client?.SendPacket(packet);
+        }
     }
 
     public void HandleRequest(int userId, bool accepted)

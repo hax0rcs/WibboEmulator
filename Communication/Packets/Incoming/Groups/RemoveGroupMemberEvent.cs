@@ -10,6 +10,7 @@ using Games.Rooms;
 using Games.Users;
 using Outgoing.Groups;
 using Outgoing.Rooms.Permissions;
+using WibboEmulator.Communication.Packets.Outgoing.Messenger;
 
 internal sealed class RemoveGroupMemberEvent : IPacketEvent
 {
@@ -29,6 +30,11 @@ internal sealed class RemoveGroupMemberEvent : IPacketEvent
         {
             if (group.IsMember(userId))
             {
+                if (group.HasChat)
+                {
+                    session.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, -1));
+                }
+
                 group.DeleteMember(userId);
             }
 
@@ -129,6 +135,12 @@ internal sealed class RemoveGroupMemberEvent : IPacketEvent
                 var user = UserManager.GetUserById(userId);
                 if (user != null)
                 {
+                    if (group.HasChat && user.Client != null)
+                    {
+                        user.Client.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, -1));
+                        user.Client.SendPacket(new GroupInfoComposer(group, session, true));
+                    }
+
                     _ = user.MyGroups.Remove(group.Id);
                 }
 

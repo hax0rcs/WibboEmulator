@@ -6,6 +6,7 @@ using Games.Chats.Filter;
 using Games.GameClients;
 using Games.Groups;
 using Outgoing.Groups;
+using WibboEmulator.Communication.Packets.Outgoing.Messenger;
 
 internal sealed class UpdateGroupIdentityEvent : IPacketEvent
 {
@@ -45,7 +46,11 @@ internal sealed class UpdateGroupIdentityEvent : IPacketEvent
         group.Name = name;
         group.Description = desc;
 
-        session.SendPacket(new GroupInfoComposer(group, session));
+        if (group.HasChat)
+        {
+            group.SendPacket(FriendListUpdateComposer.WriteGroupChat(group, 0));
+        }
 
+        session.SendPacket(new GroupInfoComposer(group, session));
     }
 }

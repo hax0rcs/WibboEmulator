@@ -2,6 +2,7 @@ namespace WibboEmulator.Communication.Packets.Incoming.Messenger;
 
 using Games.Chats.Filter;
 using Games.GameClients;
+using WibboEmulator.Games.Groups;
 
 internal sealed class SendMsgEvent : IPacketEvent
 {
@@ -19,6 +20,11 @@ internal sealed class SendMsgEvent : IPacketEvent
         if (userId == session.User.Id)
         {
             return;
+        }
+        Group group = null;
+        if (userId < 0)
+        {
+            group = GroupManager.GetGroupsChatForUser(Math.Abs(userId));
         }
 
         var message = WordFilterManager.CheckMessage(packet.PopString());
@@ -51,6 +57,23 @@ internal sealed class SendMsgEvent : IPacketEvent
             return;
         }
 
-        session.User.Messenger.SendInstantMessage(userId, message);
+        if (group != null)
+        {
+            if (!group.IsMember(session.User.Id))
+            {
+                return;
+            }
+
+            if (!group.HasChat)
+            {
+                return;
+            }
+
+            session.User.Messenger.SendInstantGroupMessage(group.Id, group.GetAllMembers, message);
+        }
+        else
+        {
+            session.User.Messenger.SendInstantMessage(userId, message);
+        }
     }
 }
