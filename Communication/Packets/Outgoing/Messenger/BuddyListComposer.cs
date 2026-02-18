@@ -45,21 +45,26 @@ internal sealed class BuddyListComposer : ServerPacket
 
         foreach (var group in groups)
         {
+            if (group == null || !group.HasChat)
+            {
+                continue;
+            }
+
             this.WriteInteger(-group.Id);
-            this.WriteString($"{group.Name} ({Math.Abs(group.Id)})");
-            this.WriteInteger(0); // unknow
+            this.WriteString($"{group.Name} ({group.Id})");
+            this.WriteInteger(1); // unknown
             this.WriteBoolean(true);
             this.WriteBoolean(false);
             this.WriteString(group == null ? "" : group.Badge);
-            this.WriteInteger(1);
+            this.WriteInteger(0);
             this.WriteString(string.Empty);
             this.WriteString(string.Empty);
             this.WriteString(string.Empty);
             this.WriteBoolean(false);
             this.WriteBoolean(false);
             this.WriteBoolean(false);
+
             this.WriteShort(0);
-            this.WriteInteger(1);
         }
     }
 }
