@@ -14,46 +14,55 @@ internal static class ItemBehaviourUtility
         switch (itemData.InteractionType)
         {
             default:
-                message.WriteInteger(item.Limited > 0 ? (int)ObjectDataKey.UNIQUE_SET + (int)ObjectDataKey.MAP_KEY : (int)ObjectDataKey.MAP_KEY);
-
-                var totalSets = 1;
-                if (itemData.RarityLevel > RaretyLevelType.None)
+                if (TypeIsColorable(item.ItemData.ItemName))
                 {
-                    totalSets++;
+                    message.WriteInteger(2);
+                    message.WriteInteger(5);
+                    message.WriteString(item.ExtraData);
+                    message.WriteString(item.ExtraData);
+                    message.WriteString("");
+
+                    message.WriteString(item.Colour1 == null ? "fffffff" : item.Colour1.Replace("#", string.Empty));
+                    message.WriteString(item.Colour2 == null ? "fffffff" : item.Colour2.Replace("#", string.Empty));
+                }
+                else
+                {
+                    message.WriteInteger(item.Limited > 0 ? (int)ObjectDataKey.UNIQUE_SET + (int)ObjectDataKey.MAP_KEY : (int)ObjectDataKey.MAP_KEY);
+
+                    var totalSets = 1;
+                    if (itemData.RarityLevel > RaretyLevelType.None)
+                    {
+                        totalSets++;
+                    }
+
+                    if (itemData.Amount >= 0)
+                    {
+                        totalSets++;
+                    }
+
+                    /*if (item.IsBuilderClub) //desabilitado até sla
+                    {
+                        totalSets++;
+                    }*/
+
+                    message.WriteInteger(totalSets);
+
+                    if (itemData.RarityLevel > RaretyLevelType.None)
+                    {
+                        message.WriteString("rarity");
+                        message.WriteString(((int)itemData.RarityLevel).ToString());
+                    }
+
+                    if (itemData.Amount >= 0)
+                    {
+                        message.WriteString("amount");
+                        message.WriteString(itemData.Amount.ToString());
+                    }
+
+                    message.WriteString("state");
+                    message.WriteString((itemData.InteractionType is not InteractionType.TONER and not InteractionType.FOOTBALL_GATE) ? item.ExtraData : string.Empty);
                 }
 
-                if (itemData.Amount >= 0)
-                {
-                    totalSets++;
-                }
-
-                if (item.IsBuilderClub)
-                {
-                    totalSets++;
-                }
-
-                message.WriteInteger(totalSets);
-
-                if (itemData.RarityLevel > RaretyLevelType.None)
-                {
-                    message.WriteString("rarity");
-                    message.WriteString(((int)itemData.RarityLevel).ToString());
-                }
-
-                if (itemData.Amount >= 0)
-                {
-                    message.WriteString("amount");
-                    message.WriteString(itemData.Amount.ToString());
-                }
-
-                if (item.IsBuilderClub) // ok? kkkkkk
-                {
-                    message.WriteString("builder");
-                    message.WriteString(item.IsBuilderClub ? "1" : "-1");
-                }
-
-                message.WriteString("state");
-                message.WriteString((itemData.InteractionType is not InteractionType.TONER and not InteractionType.FOOTBALL_GATE) ? item.ExtraData : string.Empty);
                 break;
 
             case InteractionType.EXCHANGE_TREE:
@@ -177,23 +186,6 @@ internal static class ItemBehaviourUtility
                     message.WriteString("0");
                 }
                 break;
-
-            case InteractionType.BED:
-            {
-                if (item.ItemData.ItemName.StartsWith("shadow_"))
-                {
-                    message.WriteInteger(2);
-                    message.WriteInteger(5);
-                    message.WriteString(item.ExtraData);
-                    message.WriteString(item.ExtraData);
-                    message.WriteString("");
-
-                    message.WriteString(item.Colour1 == null ? "292929" : item.Colour1.Replace("#", string.Empty));
-                    message.WriteString(item.Colour2 == null ? "fffffff" : item.Colour2.Replace("#", string.Empty));
-                }
-
-                break;
-            }
 
             case InteractionType.CRACKABLE:
                 message.WriteInteger((int)ObjectDataKey.CRACKABLE_KEY); //Type
@@ -440,6 +432,26 @@ internal static class ItemBehaviourUtility
                 message.WriteString(item.ExtraData.Contains(' ') ? item.ExtraData.Split(' ')[0] : "");
                 break;
         }
+    }
+
+    public static bool TypeIsColorable(string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName))
+        {
+            return false;
+        }
+
+        var colorableNames = SettingsManager.GetData<string>("furni.colorable.names.contains")?.Split(',');
+        if (colorableNames == null || colorableNames.Length == 0)
+        {
+            return false;
+        }
+
+        return colorableNames.Any(colorable =>
+            itemName.Equals(colorable) ||
+            itemName.StartsWith(colorable + "_") ||
+            itemName.EndsWith("_" + colorable) ||
+            itemName.Contains("_" + colorable + "_"));//ok evitou alguns problemas
     }
 }
 

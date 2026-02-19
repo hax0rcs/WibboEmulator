@@ -23,9 +23,11 @@ public class InventoryComponent(User user) : IDisposable
     private readonly ConcurrentDictionary<int, Item> _userItems = new();
     private readonly ConcurrentDictionary<int, Pet> _petItems = new();
     private readonly ConcurrentDictionary<int, Bot> _botItems = new();
+
     private readonly int _furniLimit = SettingsManager.GetData<int>("inventory.furni.limit");
     private readonly int _petLimit = SettingsManager.GetData<int>("inventory.pet.limit");
     private readonly int _botLimit = SettingsManager.GetData<int>("inventory.bot.limit");
+
     private int _inventoryPoints;
     private bool _inventoryDefined;
 
@@ -75,6 +77,11 @@ public class InventoryComponent(User user) : IDisposable
 
             foreach (var item in itemList)
             {
+                if (item.Id is < 0 or > int.MaxValue)
+                {
+                    continue;
+                }
+
                 var id = item.Id;
                 var baseItem = item.BaseItem;
                 var extraData = item.ExtraData;
@@ -430,7 +437,7 @@ public class InventoryComponent(User user) : IDisposable
             return;
         }
 
-        if (roomItem.ItemData.ItemName.StartsWith("PntEx_") == false)
+        if (!roomItem.ItemData.ItemName.StartsWith("PntEx_"))
         {
             return;
         }

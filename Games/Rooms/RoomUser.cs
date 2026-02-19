@@ -78,6 +78,8 @@ public class RoomUser : IEquatable<RoomUser>
     public int DiceCounterAmount { get; set; }
     public int DiceCounter { get; set; }
 
+    public string[] Colours { get; set; }
+    public bool ColourEnable { get; set; }
     public bool BuildToolEnable { get; set; }
     public bool BuildToolStackHeight { get; set; }
     public double BuildToolHeight { get; set; }
@@ -194,6 +196,8 @@ public class RoomUser : IEquatable<RoomUser>
         this.AllowOverride = false;
         this.CanWalk = true;
         this.CurrentItemEffect = ItemEffectType.None;
+        this.ColourEnable = false;
+        this.Colours = new string[2];
         this.BreakWalkEnable = false;
         this.AllowShoot = false;
         this.AllowBuyItems = [];

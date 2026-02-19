@@ -25,7 +25,7 @@ internal sealed class ItemDao
             }
             else
             {
-                updateFloor.Add(new ItemEntity { X = roomItem.X, Y = roomItem.Y, Z = roomItem.Z, Rot = roomItem.Rotation, ExtraData = roomItem.ExtraData, IsBc = roomItem.IsBuilderClub, Id = roomItem.Id });
+                updateFloor.Add(new ItemEntity { X = roomItem.X, Y = roomItem.Y, Z = roomItem.Z, Rot = roomItem.Rotation, ExtraData = roomItem.ExtraData, Colour1 = roomItem.Colour1, Colour2 = roomItem.Colour2, IsBc = roomItem.IsBuilderClub, Id = roomItem.Id });
             }
         }
 
@@ -42,7 +42,7 @@ internal sealed class ItemDao
         {
             _ = dbClient.Execute(
                 @"UPDATE item
-                SET x = @X, y = @Y, z = @Z, rot = @Rot, extra_data = @ExtraData, is_bc = @IsBc
+                SET x = @X, y = @Y, z = @Z, rot = @Rot, extra_data = @ExtraData, colour_1 = @Colour1, colour_2 = @Colour2, is_bc = @IsBc
                 WHERE id = @Id",
                 updateFloor);
         }

@@ -363,6 +363,7 @@ public static class CommandManager
         Register(174, new TileCopy());
         Register(175, new TileMove());
         Register(176, new ChatIcon());
-        Register(177, new RemoveGroupChat());
+        Register(178, new RemoveGroupChat());
+        Register(177, new Colour());
     }
 }

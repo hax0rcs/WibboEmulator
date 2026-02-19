@@ -3,6 +3,7 @@ namespace WibboEmulator.Communication.Packets.Incoming.Rooms.Engine;
 using Games.GameClients;
 using Games.Quests;
 using Games.Rooms;
+using WibboEmulator.Games.Items;
 
 internal sealed class UseFurnitureEvent : IPacketEvent
 {
@@ -74,6 +75,29 @@ internal sealed class UseFurnitureEvent : IPacketEvent
         else if (roomItem.ItemData.ItemName == "es_tagging")
         {
             QuestManager.ProgressUserQuest(session, QuestType.ExploreFindItem, 2148);
+        }
+
+        var roomUser = room.RoomUserManager.GetRoomUserByUserId(session.User.Id);
+
+        if (roomUser.ColourEnable)
+        {
+            if (roomUser.Colours == null || roomUser.Colours.Length <= 1)
+            {
+                roomUser.SendWhisperChat("Houve um problema para pintar esta mobília. Utilize outra cor.", false);
+                return;
+            }
+
+            if (!ItemBehaviourUtility.TypeIsColorable(roomItem.ItemData.ItemName))
+            {
+                roomUser.SendWhisperChat("Apenas mobílias da seção de coloríveis é possível definir suas cores.", false);
+                return;
+            }
+
+            roomItem.Colour1 = roomUser.Colours[0];
+            roomItem.Colour2 = roomUser.Colours[1];
+
+            roomItem.UpdateState();
+            return;
         }
 
         var request = packet.PopInt();

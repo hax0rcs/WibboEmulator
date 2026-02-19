@@ -34,7 +34,7 @@ internal sealed class FurniListComposer : ServerPacket
         this.WriteBoolean(ItemUtility.IsRare(item) && item.ItemData.AllowMarketplaceSell);
         this.WriteInteger(-1);//Seconds to expiration.
         this.WriteBoolean(false);
-        this.WriteInteger(item.Id);//Item RoomId
+        this.WriteInteger(item.RoomId);//Item RoomId
 
         if (!item.IsWallItem)
         {

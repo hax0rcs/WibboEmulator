@@ -90,7 +90,7 @@ internal sealed class PlaceObjectEvent : IPacketEvent
                 rotation = session.User.ForceRot;
             }
 
-            var item = new Item(userItem.Id, room.Id, userItem.BaseItemId, userItem.ExtraData, userItem.Limited, userItem.LimitedStack, x, y, 0.0, rotation, "", room);
+            var item = new Item(userItem.Id, room.Id, userItem.BaseItemId, userItem.ExtraData, userItem.Limited, userItem.LimitedStack, x, y, 0.0, rotation, "", room, userItem.Colour1, userItem.Colour2);
             if (room.RoomItemHandling.SetFloorItem(session, item, x, y, rotation, true, false, true))
             {
                 using (var dbClient = DatabaseManager.Connection)
@@ -146,8 +146,6 @@ internal sealed class PlaceObjectEvent : IPacketEvent
                 return;
             }
         }
-
-
         else if (userItem.IsWallItem)
         {
             var correctedData = new string[data.Length - 1];
