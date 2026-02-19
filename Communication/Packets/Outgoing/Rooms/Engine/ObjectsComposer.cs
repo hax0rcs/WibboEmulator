@@ -10,10 +10,13 @@ internal sealed class ObjectsComposer : ServerPacket
     public ObjectsComposer(Item[] items, Room room)
         : base(ServerPacketHeader.FURNITURE_FLOOR)
     {
-        this.WriteInteger(1);
+        this.WriteInteger(room.RoomItemHandling.OwnersItems.Count);//total owners
 
-        this.WriteInteger(room.RoomData.OwnerId);
-        this.WriteString(room.RoomData.OwnerName);
+        foreach (var ownerItem in room.RoomItemHandling.OwnersItems)
+        {
+            this.WriteInteger(ownerItem.Key);
+            this.WriteString(ownerItem.Value);
+        }
 
         this.WriteInteger(items.Length);
         foreach (var item in items)
@@ -22,7 +25,7 @@ internal sealed class ObjectsComposer : ServerPacket
 
             this.WriteInteger(-1); // expires
             this.WriteInteger(room.IsGameMode ? 0 : 2);
-            this.WriteInteger(room.RoomData.OwnerId);
+            this.WriteInteger(item.UserId);
         }
     }
 

@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Data;
 using Dapper;
 using Games.Items;
+using WibboEmulator.Database.Daos.User;
 
 internal sealed class ItemDao
 {
@@ -85,27 +86,27 @@ internal sealed class ItemDao
             new { ItemIds = itemIds });
     }
 
-    internal static int Insert(IDbConnection dbClient, int baseItem, int userId, string extraData, bool isBc = false) => dbClient.ExecuteScalar<int>(
-        @"INSERT INTO item (base_item, user_id, extra_data, is_bc)
-        VALUES (@BaseItem, @UserId, @ExtraData, @IsBc);
+    internal static int Insert(IDbConnection dbClient, int baseItem, int userId, string username, string extraData, bool isBc = false) => dbClient.ExecuteScalar<int>(
+        @"INSERT INTO item (base_item, user_id, username, extra_data, is_bc)
+        VALUES (@BaseItem, @UserId, @Username, @ExtraData, @IsBc);
         SELECT LAST_INSERT_ID();",
-        new { BaseItem = baseItem, UserId = userId, ExtraData = extraData, IsBc = isBc });
+        new { BaseItem = baseItem, UserId = userId, Username = username, ExtraData = extraData, IsBc = isBc });
 
-    internal static void Insert(IDbConnection dbClient, int itemId, int baseItem, int userId, string extraData, bool isBc = false) => dbClient.Execute(
-        @"INSERT INTO item (id, base_item, user_id, extra_data, is_bc)
-        VALUES (@ItemId, @BaseItem, @UserId, @ExtraData, @isBc);",
-        new { ItemId = itemId, BaseItem = baseItem, UserId = userId, ExtraData = extraData, IsBc = isBc });
+    internal static void Insert(IDbConnection dbClient, int itemId, int baseItem, int userId, string username, string extraData, bool isBc = false) => dbClient.Execute(
+        @"INSERT INTO item (id, base_item, user_id, username, extra_data, is_bc)
+        VALUES (@ItemId, @BaseItem, @UserId, @Username, @ExtraData, @isBc);",
+        new { ItemId = itemId, BaseItem = baseItem, UserId = userId, Username = username, ExtraData = extraData, IsBc = isBc });
 
-    internal static int InsertDuplicate(IDbConnection dbClient, int userId, int roomId, int itemId) => dbClient.ExecuteScalar<int>(
-        @"INSERT INTO item (user_id, room_id, base_item, extra_data, x, y, z, rot, wall_pos)
-        SELECT @UserId, @RoomId, base_item, extra_data, x, y, z, rot, wall_pos, colour_1, colour_2, is_bc
+    internal static int InsertDuplicate(IDbConnection dbClient, int userId, string username, int roomId, int itemId) => dbClient.ExecuteScalar<int>(
+        @"INSERT INTO item (user_id, username, room_id, base_item, extra_data, x, y, z, rot, wall_pos)
+        SELECT @UserId, @Username, @RoomId, base_item, extra_data, x, y, z, rot, wall_pos, colour_1, colour_2, is_bc
         FROM item
         WHERE id = @ItemId;
         SELECT LAST_INSERT_ID();",
-        new { UserId = userId, RoomId = roomId, ItemId = itemId });
+        new { UserId = userId, Username = username, RoomId = roomId, ItemId = itemId });
 
-    internal static void InsertDuplicate(IDbConnection dbClient, int userId, int roomId) => dbClient.Execute(
-        "INSERT INTO `item` (user_id, room_id, base_item, extra_data, x, y, z, rot) SELECT '" + userId + "', '" + roomId + "', base_item, extra_data, x, y, z, rot FROM `item` WHERE room_id = '5328079'");
+    internal static void InsertDuplicate(IDbConnection dbClient, int userId, string username, int roomId) => dbClient.Execute(
+        "INSERT INTO `item` (user_id, username, room_id, base_item, extra_data, x, y, z, rot) SELECT '" + userId + "', '" + username + "', '" + roomId + "', base_item, extra_data, x, y, z, rot FROM `item` WHERE room_id = '5328079'");
 
     internal static void Delete(IDbConnection dbClient, int itemId) => dbClient.Execute(
         "DELETE `item`, `item_limited` FROM `item` LEFT JOIN `item_limited` ON(`item_limited`.item_id = `item`.id) WHERE id = '" + itemId + "'");
@@ -124,6 +125,12 @@ internal sealed class ItemDao
 
     internal static void DeleteAllWithoutRare(IDbConnection dbClient, int userId) => dbClient.Execute(
         "DELETE `item`, `item_limited`, `item_present`, `item_moodlight`, `item_teleport`, `item_wired` FROM `item` LEFT JOIN `item_limited` ON (`item_limited`.item_id = `item`.id) LEFT JOIN `item_present` ON (`item_present`.item_id = `item`.id) LEFT JOIN `item_moodlight` ON (`item_moodlight`.item_id = `item`.id) LEFT JOIN `item_teleport` ON (tele_one_id = `item`.id) LEFT JOIN `item_wired` ON (trigger_id = `item`.id) WHERE room_id = '0' AND user_id = '" + userId + "' AND base_item NOT IN (SELECT id FROM `item_base` WHERE is_rare = '1' OR interaction_type = 'trophy' OR interaction_type = 'gift')");
+
+    internal static void UpdateItemUsername(IDbConnection dbClient, string username, string newUsername) => dbClient.Execute("UPDATE item SET username = @NewUsername WHERE username = @Username", new
+    {
+        NewUsername = newUsername,
+        Username = username
+    });
 
     internal static void UpdateExtradata(IDbConnection dbClient, int itemId, string extraData) => dbClient.Execute(
         "UPDATE item SET extra_data = @ExtraData WHERE id = @ItemId LIMIT 1",
@@ -145,8 +152,8 @@ internal sealed class ItemDao
         "UPDATE item SET base_item = @BaseItem, extra_data = @ExtraData WHERE id = @ItemId",
         new { BaseItem = baseItem, ExtraData = extraData, ItemId = itemId });
 
-    internal static void UpdateRoomIdAndUserId(IDbConnection dbClient, int itemId, int roomId, int userId) => dbClient.Execute(
-        "UPDATE `item` SET room_id = '" + roomId + "', user_id = '" + userId + "' WHERE id = '" + itemId + "'");
+    internal static void UpdateRoomIdAndUserId(IDbConnection dbClient, int itemId, int roomId, int userId, string username) => dbClient.Execute(
+        "UPDATE `item` SET room_id = '" + roomId + "', user_id = '" + userId + "', username = '" + username + "' WHERE id = '" + itemId + "'");
 
     internal static void UpdateRoomIdAndUserId(IDbConnection dbClient, int userId, int roomId) => dbClient.Execute(
         "UPDATE `item` SET room_id = '0', user_id = '" + userId + "' WHERE room_id = '" + roomId + "'");
@@ -159,7 +166,7 @@ internal sealed class ItemDao
         "SELECT room_id FROM `item` WHERE id = '" + itemId + "' LIMIT 1");
 
     internal static List<ItemEntity> GetAll(IDbConnection dbClient, int roomId) => dbClient.Query<ItemEntity>(
-        @"SELECT `item`.id, `item`.user_id, `item`.room_id, `item`.base_item, `item`.extra_data, `item`.x, `item`.y, `item`.z, `item`.rot, `item`.wall_pos, `item`.colour_1, `item`.colour_2, `item`.is_bc, `item_limited`.limited_number, `item_limited`.limited_stack, `item_wired`.trigger_data, `item_wired`.trigger_data_2, `item_wired`.triggers_item, `item_wired`.all_user_triggerable, `item_wired`.delay, `item_moodlight`.enabled, `item_moodlight`.current_preset, `item_moodlight`.preset_one, `item_moodlight`.preset_two, `item_moodlight`.preset_three
+        @"SELECT `item`.id, `item`.user_id, `item`.username, `item`.room_id, `item`.base_item, `item`.extra_data, `item`.x, `item`.y, `item`.z, `item`.rot, `item`.wall_pos, `item`.colour_1, `item`.colour_2, `item`.is_bc, `item_limited`.limited_number, `item_limited`.limited_stack, `item_wired`.trigger_data, `item_wired`.trigger_data_2, `item_wired`.triggers_item, `item_wired`.all_user_triggerable, `item_wired`.delay, `item_moodlight`.enabled, `item_moodlight`.current_preset, `item_moodlight`.preset_one, `item_moodlight`.preset_two, `item_moodlight`.preset_three
         FROM `item`
         LEFT JOIN `item_moodlight` ON (`item_moodlight`.item_id = `item`.id)
         LEFT JOIN `item_wired` ON (trigger_id = `item`.id)
@@ -172,7 +179,7 @@ internal sealed class ItemDao
         "SELECT id FROM `item` WHERE id IN (SELECT item_id FROM `item_limited` WHERE limited_number = '" + limitedNumber + "') AND base_item = '" + itemId + "' LIMIT 1");
 
     internal static List<ItemEntity> GetAllByUserId(IDbConnection dbClient, int userId, int limit) => dbClient.Query<ItemEntity>(
-        "SELECT `item`.id, `item`.base_item, `item`.extra_data, `item`.colour_1, `item`.colour_2, `item`.is_bc, `item_limited`.limited_number, `item_limited`.limited_stack FROM `item` LEFT JOIN `item_limited` ON (`item_limited`.item_id = `item`.id) WHERE `item`.user_id = @UserId AND `item`.room_id = '0' LIMIT @Limit",
+        "SELECT `item`.id, `item`.user_id, `item`.username, `item`.base_item, `item`.extra_data, `item`.colour_1, `item`.colour_2, `item`.is_bc, `item_limited`.limited_number, `item_limited`.limited_stack FROM `item` LEFT JOIN `item_limited` ON (`item_limited`.item_id = `item`.id) WHERE `item`.user_id = @UserId AND `item`.room_id = '0' LIMIT @Limit",
         new { UserId = userId, Limit = limit }
     ).ToList();
 }
@@ -181,6 +188,7 @@ public class ItemEntity
 {
     public int Id { get; set; }
     public int UserId { get; set; }
+    public string Username { get; set; }
     public int RoomId { get; set; }
     public int BaseItem { get; set; }
     public string ExtraData { get; set; }

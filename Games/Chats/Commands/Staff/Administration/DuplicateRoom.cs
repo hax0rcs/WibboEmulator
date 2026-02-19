@@ -43,7 +43,7 @@ internal sealed class DuplicateRoom : IChatCommand
                     continue;
                 }
 
-                var itemId = ItemDao.InsertDuplicate(dbClient, session.User.Id, roomId, oldItemId);
+                var itemId = ItemDao.InsertDuplicate(dbClient, session.User.Id, session.User.Username, roomId, oldItemId);
 
                 newItemsId.Add(oldItemId, itemId);
 

@@ -81,10 +81,9 @@ public class PlaceBuilderObjectEvent : IPacketEvent
 
         var newItem = ItemFactory.CreateSingleItemNullable(DatabaseManager.Connection, item.Data, session.User, extraParam, 0, 0, true);
 
-        if (room.RoomItemHandling.SetFloorItem(session, new Item(newItem.Id, session.User.RoomId, item.ItemId, extraParam, 0, 0, x, y, 0,
-                2, "", session.User.Room, "fffffff", "fffffff", true), x, y, rot, true, false, true))
+        if (room.RoomItemHandling.SetFloorItem(session, newItem, x, y, rot, true, false, true))
         {
-            ItemDao.UpdateRoomIdAndUserId(DatabaseManager.Connection, newItem.Id, session.User.RoomId, session.User.Id);
+            ItemDao.UpdateRoomIdAndUserId(DatabaseManager.Connection, newItem.Id, room.Id, newItem.UserId, newItem.Username);
         }
         else
         {

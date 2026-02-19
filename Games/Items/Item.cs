@@ -17,6 +17,8 @@ public class Item : IEquatable<Item>
 {
     public int Id { get; set; }
     public int RoomId { get; set; }
+    public int UserId { get; set; }
+    public string Username { get; set; }
     public int BaseItemId { get; set; }
     public string ExtraData { get; set; }
     public int Extra { get; set; }
@@ -185,17 +187,21 @@ public class Item : IEquatable<Item>
         _ => ItemCategoryType.DEFAULT,
     };
 
-    public Item(int id, int roomId, int baseItemId, string extraData, int limitedNumber, int limitedStack, int x, int y, double z, int rot,
+    public Item(int id, int userId, string username, int roomId, int baseItemId, string extraData, int limitedNumber, int limitedStack, int x, int y, double z, int rot,
         string wallCoord, Room room, string colour1 = "ffffff", string colour2 = "ffffff", bool isBuilderClub = false)
     {
         if (ItemManager.GetItem(baseItemId, out var data))
         {
             this.Id = id;
+            this.UserId = userId;
+            this.Username = username;
             this.RoomId = roomId;
             this.BaseItemId = baseItemId;
             this.ExtraData = extraData;
+
             this.X = x;
             this.Y = y;
+
             if (!double.IsInfinity(z))
             {
                 this.Z = z;

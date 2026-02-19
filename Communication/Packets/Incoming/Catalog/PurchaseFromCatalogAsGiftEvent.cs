@@ -129,7 +129,7 @@ internal sealed class PurchaseFromCatalogAsGiftEvent : IPacketEvent
 
         var ed = (showMyFace ? session.User.Id : 0) + ";" + giftMessage + Convert.ToChar(5) + ribbon + Convert.ToChar(5) + boxId;
 
-        var newItemId = ItemDao.Insert(dbClient, presentData.Id, user.Id, ed);
+        var newItemId = ItemDao.Insert(dbClient, presentData.Id, user.Id, user.Username, ed);
 
         ItemPresentDao.Insert(dbClient, newItemId, item.Data.Id, extraData);
 

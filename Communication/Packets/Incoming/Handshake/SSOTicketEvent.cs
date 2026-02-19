@@ -249,7 +249,7 @@ internal sealed class SSOTicketEvent : IPacketEvent
             return false;
         }
 
-        ItemDao.InsertDuplicate(dbClient, session.User.Id, roomId);
+        ItemDao.InsertDuplicate(dbClient, session.User.Id, session.User.Username, roomId);
 
         if (!session.User.UsersRooms.Contains(roomId))
         {

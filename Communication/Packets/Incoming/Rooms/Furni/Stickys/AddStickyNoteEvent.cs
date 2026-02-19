@@ -37,7 +37,7 @@ internal sealed class AddStickyNoteEvent : IPacketEvent
         }
 
         var wallCoord = ItemWallUtility.WallPositionCheck(":" + str.Split(':')[1]);
-        var roomItem = new Item(userItem.Id, room.Id, userItem.BaseItemId, userItem.ExtraData, userItem.Limited, userItem.LimitedStack, 0, 0, 0.0, 0, wallCoord, room);
+        var roomItem = new Item(userItem.Id, userItem.UserId, userItem.Username, room.Id, userItem.BaseItemId, userItem.ExtraData, userItem.Limited, userItem.LimitedStack, 0, 0, 0.0, 0, wallCoord, room);
         if (!room.RoomItemHandling.SetWallItem(session, roomItem))
         {
             return;
@@ -45,7 +45,7 @@ internal sealed class AddStickyNoteEvent : IPacketEvent
 
         using (var dbClient = DatabaseManager.Connection)
         {
-            ItemDao.UpdateRoomIdAndUserId(dbClient, id, room.Id, room.RoomData.OwnerId);
+            ItemDao.UpdateRoomIdAndUserId(dbClient, id, room.Id, userItem.UserId, userItem.Username);
         }
 
         session.User.InventoryComponent.RemoveItem(id);

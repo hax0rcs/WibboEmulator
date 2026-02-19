@@ -14,9 +14,9 @@ public class ItemFactory
             throw new InvalidOperationException("Data cannot be null.");
         }
 
-        var item = new Item(0, 0, data.Id, extraData, limitedNumber, limitedStack, 0, 0, 0, 0, "", null, "fffffff", "fffffff", isBuilderClub)
+        var item = new Item(0, user.Id, user.Username, 0, data.Id, extraData, limitedNumber, limitedStack, 0, 0, 0, 0, "", null, "fffffff", "fffffff", isBuilderClub)
         {
-            Id = ItemDao.Insert(dbClient, data.Id, user.Id, extraData, isBuilderClub)
+            Id = ItemDao.Insert(dbClient, data.Id, user.Id, user.Username, extraData, isBuilderClub)
         };
 
         if (limitedNumber > 0)
@@ -34,14 +34,14 @@ public class ItemFactory
             return null;
         }
 
-        ItemDao.Insert(dbClient, itemId, data.Id, user.Id, extraData);
+        ItemDao.Insert(dbClient, itemId, data.Id, user.Id, user.Username, extraData);
 
         if (limitedNumber > 0)
         {
             ItemLimitedDao.Insert(dbClient, itemId, limitedNumber, limitedStack);
         }
 
-        var item = new Item(itemId, 0, data.Id, extraData, limitedNumber, limitedStack, 0, 0, 0, 0, "", null);
+        var item = new Item(itemId, user.Id, user.Username, 0, data.Id, extraData, limitedNumber, limitedStack, 0, 0, 0, 0, "", null);
         return item;
     }
 
@@ -55,9 +55,9 @@ public class ItemFactory
         var items = new List<Item>();
         for (var i = 0; i < amount; i++)
         {
-            var itemId = ItemDao.Insert(dbClient, data.Id, user.Id, extraData);
+            var itemId = ItemDao.Insert(dbClient, data.Id, user.Id, user.Username, extraData);
 
-            var item = new Item(itemId, 0, data.Id, extraData, 0, 0, 0, 0, 0, 0, "", null);
+            var item = new Item(itemId, user.Id, user.Username, 0, data.Id, extraData, 0, 0, 0, 0, 0, 0, "", null);
 
             items.Add(item);
         }
@@ -68,11 +68,11 @@ public class ItemFactory
     {
         var items = new List<Item>();
 
-        var item1Id = ItemDao.Insert(dbClient, data.Id, user.Id, "");
-        var item2Id = ItemDao.Insert(dbClient, data.Id, user.Id, item1Id.ToString());
+        var item1Id = ItemDao.Insert(dbClient, data.Id, user.Id, user.Username, "");
+        var item2Id = ItemDao.Insert(dbClient, data.Id, user.Id, user.Username, item1Id.ToString());
 
-        var item1 = new Item(item1Id, 0, data.Id, "", 0, 0, 0, 0, 0, 0, "", null);
-        var item2 = new Item(item2Id, 0, data.Id, "", 0, 0, 0, 0, 0, 0, "", null);
+        var item1 = new Item(item1Id, user.Id, user.Username, 0, data.Id, "", 0, 0, 0, 0, 0, 0, "", null);
+        var item2 = new Item(item2Id, user.Id, user.Username, 0, data.Id, "", 0, 0, 0, 0, 0, 0, "", null);
 
         ItemTeleportDao.Insert(dbClient, item1Id, item2Id);
         ItemTeleportDao.Insert(dbClient, item2Id, item1Id);

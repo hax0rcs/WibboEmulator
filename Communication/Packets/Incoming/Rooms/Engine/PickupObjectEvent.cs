@@ -6,6 +6,7 @@ using Games.GameClients;
 using Games.Quests;
 using Games.Rooms;
 using Outgoing.BuildersClub;
+using WibboEmulator.Database.Daos.Item;
 
 internal sealed class PickupObjectEvent : IPacketEvent
 {
@@ -21,16 +22,17 @@ internal sealed class PickupObjectEvent : IPacketEvent
             return;
         }
 
-        if (!room.CheckRights(session, true))
-        {
-            return;
-        }
-
         var item = room.RoomItemHandling.GetItem(itemId);
         if (item == null)
         {
             return;
         }
+
+        if (!room.CheckRights(session, true) && item.UserId != session.User.Id)
+        {
+            return;
+        }
+
 
         if (room.RoomData.SellPrice > 0)
         {
@@ -42,14 +44,33 @@ internal sealed class PickupObjectEvent : IPacketEvent
 
         room.RoomItemHandling.RemoveFurniture(session, item.Id);
 
-        if (!item.IsBuilderClub)
+        if (item.IsBuilderClub)
         {
-            session.User.InventoryComponent.AddItem(dbClient, item);
+            session.User.BCItemsUsed--;
+            room.RoomItemHandling.RemoveFurniture(session, item.Id, false);
+
+            ItemDao.Delete(dbClient, item.Id);
+
+            session.SendPacket(new BCBorrowedItemsComposer(session.User.BCItemsUsed));
         }
         else
         {
-            session.User.BCItemsUsed--;
-            session.SendPacket(new BCBorrowedItemsComposer(session.User.BCItemsUsed));
+            var ownerItem = GameClientManager.GetClientByUserID(item.UserId);
+            room.RoomItemHandling.RemoveFurniture(session, item.Id, true);
+
+            if (ownerItem != null && ownerItem.User.Username != session.User.Username)
+            {
+                ownerItem.User.InventoryComponent.AddItem(dbClient, item);
+            }
+            else if (session.User.Id == item.UserId)
+            {
+                session.User.InventoryComponent.AddItem(dbClient, item);
+            }
+            else
+            {
+                ItemDao.UpdateRoomIdAndUserId(dbClient, item.Id, 0, item.UserId, item.Username);
+            }
+
         }
 
         QuestManager.ProgressUserQuest(session, QuestType.FurniPick, 0);

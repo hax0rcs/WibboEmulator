@@ -3,6 +3,7 @@ namespace WibboEmulator.Games.Rooms;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using Communication.Packets.Outgoing;
 using Communication.Packets.Outgoing.Rooms.Engine;
 using Core;
@@ -29,11 +30,14 @@ public class RoomItemHandling(Room room)
 
     private readonly List<int> _rollerItemsMoved = [];
     private readonly List<int> _rollerUsersMoved = [];
+
     private readonly ServerPacketList _rollerMessages = new();
 
     private int _rollerSpeed = 4;
     private int _rollerCycle;
+
     private readonly ConcurrentQueue<Item> _roomItemUpdateQueue = new();
+
     private int _itemTempoId;
 
     public void QueueRoomItemUpdate(Item item) => this._roomItemUpdateQueue.Enqueue(item);
@@ -49,6 +53,7 @@ public class RoomItemHandling(Room room)
 
             roomItem.Destroy();
             listMessage.Add(new ObjectRemoveComposer(roomItem.Id, session.User.Id));
+
             _ = room.GameMap.RemoveFromMap(roomItem);
 
             if (!roomItem.IsBuilderClub)
@@ -77,6 +82,7 @@ public class RoomItemHandling(Room room)
         this._itemsTemp.Clear();
         this._updateItems.Clear();
         this._rollers.Clear();
+
         using (var dbClient = DatabaseManager.Connection)
         {
             ItemDao.UpdateRoomIdAndUserId(dbClient, room.RoomData.OwnerId, room.Id);
@@ -129,9 +135,10 @@ public class RoomItemHandling(Room room)
             this._wallItems.Clear();
         }
 
-        int itemID;
+        int itemId;
         int userId;
-        int baseID;
+        string username;
+        int baseId;
         string extraData;
         int x;
         int y;
@@ -166,15 +173,19 @@ public class RoomItemHandling(Room room)
 
         foreach (var item in itemList)
         {
-            itemID = item.Id;
+            itemId = item.Id;
             userId = item.UserId;
-            baseID = item.BaseItem;
+            username = item.Username;
+            baseId = item.BaseItem;
             extraData = item.ExtraData;
+
             x = item.X;
             y = item.Y;
             z = item.Z;
             rot = item.Rot;
+
             wallposs = item.WallPos;
+
             colour1 = item.Colour1;
             colour2 = item.Colour2;
             isBuilder = item.IsBc;
@@ -182,10 +193,12 @@ public class RoomItemHandling(Room room)
             limited = item.LimitedNumber ?? 0;
             limitedTo = item.LimitedStack ?? 0;
 
-            if (!ItemManager.GetItem(baseID, out var data))
+            if (!ItemManager.GetItem(baseId, out var data))
             {
                 continue;
             }
+
+            _ = this.OwnersItems.TryAdd(userId, username);
 
             if (data.Type == ItemType.I)
             {
@@ -198,10 +211,10 @@ public class RoomItemHandling(Room room)
                     wallCoord = wallposs;
                 }
 
-                var roomItem = new Item(itemID, room.Id, baseID, extraData, limited, limitedTo, 0, 0, 0.0, 0, wallCoord, room);
-                if (!this._wallItems.ContainsKey(itemID))
+                var roomItem = new Item(itemId, userId, username, room.Id, baseId, extraData, limited, limitedTo, 0, 0, 0.0, 0, wallCoord, room);
+                if (!this._wallItems.ContainsKey(itemId))
                 {
-                    _ = this._wallItems.TryAdd(itemID, roomItem);
+                    _ = this._wallItems.TryAdd(itemId, roomItem);
                 }
 
                 if (roomItem.ItemData.InteractionType == InteractionType.MOODLIGHT)
@@ -218,10 +231,10 @@ public class RoomItemHandling(Room room)
             }
             else //Is flooritem
             {
-                var roomItem = new Item(itemID, room.Id, baseID, extraData, limited, limitedTo, x, y, z, rot, "", room, colour1, colour2, isBuilder);
-                if (!this._floorItems.ContainsKey(itemID))
+                var roomItem = new Item(itemId, userId, username, room.Id, baseId, extraData, limited, limitedTo, x, y, z, rot, "", room, colour1, colour2, isBuilder);
+                if (!this._floorItems.ContainsKey(itemId))
                 {
-                    _ = this._floorItems.TryAdd(itemID, roomItem);
+                    _ = this._floorItems.TryAdd(itemId, roomItem);
                 }
 
                 if (WiredUtillity.TypeIsWired(data.InteractionType))
@@ -310,7 +323,9 @@ public class RoomItemHandling(Room room)
 
     public IEnumerable<Item> WallAndFloorItems => this._floorItems.Values.Concat(this._wallItems.Values);
 
-    public void RemoveFurniture(GameClient session, int id)
+    public ConcurrentDictionary<int, string> OwnersItems { get; } = new();
+
+    public void RemoveFurniture(GameClient session, int id, bool animation = false)
     {
         var roomItem = this.GetItem(id);
         if (roomItem == null)
@@ -322,7 +337,7 @@ public class RoomItemHandling(Room room)
         this.RemoveRoomItem(roomItem);
         roomItem.Destroy();
 
-        room.SendPacket(roomItem.IsWallItem ? new ItemRemoveComposer(roomItem.Id, room.RoomData.OwnerId) : new ObjectRemoveComposer(roomItem.Id, room.RoomData.OwnerId));
+        room.SendPacket(roomItem.IsWallItem ? new ItemRemoveComposer(roomItem.Id, roomItem.UserId) : new ObjectRemoveComposer(roomItem.Id, animation ? roomItem.UserId : -1));
     }
 
     public void RemoveTempItem(int id)
@@ -561,6 +576,7 @@ public class RoomItemHandling(Room room)
                 if (needsReAdd)
                 {
                     this.UpdateItem(item);
+
                     _ = room.GameMap.AddItemToMap(item);
                 }
                 return false;
@@ -719,7 +735,8 @@ public class RoomItemHandling(Room room)
                 this.UpdateItem(item);
                 if (sendMessage)
                 {
-                    room.SendPacket(new ObjectAddComposer(item, room.RoomData.OwnerName, room.RoomData.OwnerId));
+                    session.SendWhisper("2 usr: " + item.UserId + ", usrnm: " + item.Username);
+                    room.SendPacket(new ObjectAddComposer(item, item.Username, item.UserId));
                 }
             }
         }
@@ -860,6 +877,7 @@ public class RoomItemHandling(Room room)
         this._floorItems.Clear();
         this._wallItems.Clear();
         this._itemsTemp.Clear();
+        this.OwnersItems.Clear();
         this._updateItems.Clear();
         this._rollerUsersMoved.Clear();
         this._rollerMessages.Clear();

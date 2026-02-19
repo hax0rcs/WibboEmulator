@@ -17,6 +17,7 @@ using Database.Daos.User;
 using Items;
 using Rooms.AI;
 using Utilities;
+using WibboEmulator.Games.Items.Interactors;
 
 public class InventoryComponent(User user) : IDisposable
 {
@@ -77,18 +78,16 @@ public class InventoryComponent(User user) : IDisposable
 
             foreach (var item in itemList)
             {
-                if (item.Id is < 0 or > int.MaxValue)
-                {
-                    continue;
-                }
-
                 var id = item.Id;
+                var userId = item.UserId;
+                var username = item.Username;
                 var baseItem = item.BaseItem;
                 var extraData = item.ExtraData;
+
                 var limited = item.LimitedNumber ?? 0;
                 var limitedTo = item.LimitedStack ?? 0;
 
-                var userItem = new Item(id, 0, baseItem, extraData, limited, limitedTo, 0, 0, 0.0, 0, "", null);
+                var userItem = new Item(id, userId, username, 0, baseItem, extraData, limited, limitedTo, 0, 0, 0.0, 0, "", null);
                 _ = this._userItems.TryAdd(id, userItem);
             }
         }
@@ -356,16 +355,20 @@ public class InventoryComponent(User user) : IDisposable
         foreach (var item in itemList)
         {
             var id = item.Id;
+            var userId = item.UserId;
+            var username = item.Username;
             var baseItem = item.BaseItem;
             var extraData = item.ExtraData;
+
             var colour1 = item.Colour1;
             var colour2 = item.Colour2;
+
             var isBuilder = item.IsBc;
 
             var limited = item.LimitedNumber ?? 0;
             var limitedTo = item.LimitedStack ?? 0;
 
-            var userItem = new Item(id, 0, baseItem, extraData, limited, limitedTo, 0, 0, 0.0, 0, "", null, colour1, colour2, isBuilder);
+            var userItem = new Item(id, userId, username, 0, baseItem, extraData, limited, limitedTo, 0, 0, 0.0, 0, "", null, colour1, colour2, isBuilder);
             _ = this._userItems.TryAdd(id, userItem);
 
             this.AddInventoryPoint(userItem);
@@ -460,7 +463,7 @@ public class InventoryComponent(User user) : IDisposable
         }
     }
 
-    private bool UserHoldsItem(int itemID) => this._userItems.ContainsKey(itemID);
+    private bool UserHoldsItem(int itemId) => this._userItems.ContainsKey(itemId);
 
     public bool TryGetFirstItemByBaseItemId(int baseItemId, out Item foundItem)
     {
@@ -504,9 +507,9 @@ public class InventoryComponent(User user) : IDisposable
 
     public void AddItem(IDbConnection dbClient, Item item)
     {
-        ItemDao.UpdateRoomIdAndUserId(dbClient, item.Id, 0, user.Id);
+        ItemDao.UpdateRoomIdAndUserId(dbClient, item.Id, 0, user.Id, user.Username);
 
-        var userItem = new Item(item.Id, 0, item.BaseItemId, item.ExtraData, item.Limited, item.LimitedStack, 0, 0, 0.0, 0, "", null, item.Colour1, item.Colour2);
+        var userItem = new Item(item.Id, item.UserId, item.Username, 0, item.BaseItemId, item.ExtraData, item.Limited, item.LimitedStack, 0, 0, 0.0, 0, "", null, item.Colour1, item.Colour2);
         if (this.UserHoldsItem(item.Id))
         {
             this.RemoveItem(item.Id);

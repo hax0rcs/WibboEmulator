@@ -523,6 +523,7 @@ public class GameMap
         }
 
         this.RemoveSpecialItem(item);
+        _ = this._room.RoomItemHandling.OwnersItems.TryRemove(item.UserId, out _);
 
         var flag = false;
         foreach (var coord in item.GetAffectedTiles)
@@ -557,6 +558,7 @@ public class GameMap
                 _ = this.ConstructMapForItem(roomItem, coord);
             }
         }
+
         noDoublons.Clear();
         return flag;
     }
@@ -569,6 +571,11 @@ public class GameMap
         }
 
         this.AddSpecialItems(item);
+
+        if (item.UserId > 0)
+        {
+            _ = this._room.RoomItemHandling.OwnersItems.TryAdd(item.UserId, item.Username);
+        }
 
         switch (item.ItemData.InteractionType)
         {
