@@ -3,7 +3,6 @@ namespace WibboEmulator.Games.Rooms;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using Communication.Packets.Outgoing;
 using Communication.Packets.Outgoing.Rooms.Engine;
 using Core;
@@ -28,6 +27,8 @@ public class RoomItemHandling(Room room)
 
     private readonly ConcurrentDictionary<int, Item> _updateItems = new();
 
+    private readonly ConcurrentDictionary<int, string> _ownersItems = new();
+
     private readonly List<int> _rollerItemsMoved = [];
     private readonly List<int> _rollerUsersMoved = [];
 
@@ -42,50 +43,89 @@ public class RoomItemHandling(Room room)
 
     public void QueueRoomItemUpdate(Item item) => this._roomItemUpdateQueue.Enqueue(item);
 
-    public List<Item> RemoveAllFurnitureToInventory(GameClient session)
+    public List<Item> RemoveAllFurnitureToInventory(GameClient session, bool allOwners, bool onlyEject = false)
     {
         var listMessage = new ServerPacketList();
         var items = new List<Item>();
 
         foreach (var roomItem in this._floorItems.Values.ToList())
         {
+            if (roomItem.IsBuilderClub)
+            {
+                continue;
+            }
+
+            if (allOwners)
+            {
+                if (!onlyEject && roomItem.Username != session.User.Username)
+                {
+                    continue;
+                }
+
+                if (onlyEject && roomItem.Username == session.User.Username)
+                {
+                    continue;
+                }
+            }
+
             roomItem.Interactor.OnRemove(session, roomItem);
 
             roomItem.Destroy();
             listMessage.Add(new ObjectRemoveComposer(roomItem.Id, session.User.Id));
 
             _ = room.GameMap.RemoveFromMap(roomItem);
-
-            if (!roomItem.IsBuilderClub)
-            {
-                items.Add(roomItem);
-            }
+            items.Add(roomItem);
         }
 
         foreach (var roomItem in this._wallItems.Values.ToList())
         {
+            if (roomItem.IsBuilderClub)
+            {
+                continue;
+            }
+
+            if (roomItem.Username != session.User.Username)
+            {
+                continue;
+            }
+
             roomItem.Interactor.OnRemove(session, roomItem);
             roomItem.Destroy();
 
             listMessage.Add(new ItemRemoveComposer(roomItem.Id, room.RoomData.OwnerId));
-
-            if (!roomItem.IsBuilderClub)
-            {
-                items.Add(roomItem);
-            }
+            items.Add(roomItem);
         }
 
         room.SendMessage(listMessage);
 
-        this._wallItems.Clear();
-        this._floorItems.Clear();
+        foreach (var item in items)
+        {
+            if (this._floorItems.ContainsKey(item.Id))
+            {
+                _ = this._floorItems.TryRemove(item.Id, out _);
+            }
+            if (this._wallItems.ContainsKey(item.Id))
+            {
+                _ = this._wallItems.TryRemove(item.Id, out _);
+            }
+            if (this._ownersItems.ContainsKey(item.UserId))
+            {
+                _ = this._ownersItems.TryRemove(item.UserId, out _);
+            }
+        }
+
         this._itemsTemp.Clear();
         this._updateItems.Clear();
         this._rollers.Clear();
 
+        this._ownersItems.Clear();
+
         using (var dbClient = DatabaseManager.Connection)
         {
-            ItemDao.UpdateRoomIdAndUserId(dbClient, room.RoomData.OwnerId, room.Id);
+            foreach (var roomItem in items)
+            {
+                ItemDao.UpdateRoomIdAndUserId(dbClient, roomItem.UserId, room.Id);
+            }
         }
 
         room.GameMap.GenerateMaps();
@@ -198,7 +238,7 @@ public class RoomItemHandling(Room room)
                 continue;
             }
 
-            _ = this.OwnersItems.TryAdd(userId, username);
+            _ = this._ownersItems.TryAdd(userId, username);
 
             if (data.Type == ItemType.I)
             {
@@ -323,7 +363,7 @@ public class RoomItemHandling(Room room)
 
     public IEnumerable<Item> WallAndFloorItems => this._floorItems.Values.Concat(this._wallItems.Values);
 
-    public ConcurrentDictionary<int, string> OwnersItems { get; } = new();
+    public ConcurrentDictionary<int, string> OwnersItems() => this._ownersItems;
 
     public void RemoveFurniture(GameClient session, int id, bool animation = false)
     {
@@ -480,8 +520,10 @@ public class RoomItemHandling(Room room)
 
                                     horseRoomUser.SetPosRoller(nextCoord.X, nextCoord.Y, nextZ);
                                 }
+
                                 userNextZ += 1;
                             }
+
                             this._rollerMessages.Add(new SlideObjectBundleComposer(userForSquare.X, userForSquare.Y, userForSquare.Z, nextCoord.X, nextCoord.Y, userNextZ, userForSquare.VirtualId, roller.Id, false));
                             this._rollerUsersMoved.Add(userForSquare.UserId);
 
@@ -735,7 +777,6 @@ public class RoomItemHandling(Room room)
                 this.UpdateItem(item);
                 if (sendMessage)
                 {
-                    session.SendWhisper("2 usr: " + item.UserId + ", usrnm: " + item.Username);
                     room.SendPacket(new ObjectAddComposer(item, item.Username, item.UserId));
                 }
             }
@@ -877,7 +918,7 @@ public class RoomItemHandling(Room room)
         this._floorItems.Clear();
         this._wallItems.Clear();
         this._itemsTemp.Clear();
-        this.OwnersItems.Clear();
+        this._ownersItems.Clear();
         this._updateItems.Clear();
         this._rollerUsersMoved.Clear();
         this._rollerMessages.Clear();

@@ -7,6 +7,7 @@ using Database.Daos.Room;
 using Database.Daos.User;
 using Games.GameClients;
 using Games.Rooms;
+using WibboEmulator.Core.Language;
 
 internal sealed class DeleteRoomEvent : IPacketEvent
 {
@@ -33,11 +34,42 @@ internal sealed class DeleteRoomEvent : IPacketEvent
 
         if (room.RoomData.Group != null)
         {
-            return;
-            // TODO: a notification like "you must first delete the group of this room"
+            session.SendHugeNotification(LanguageManager.TryGetValue("room.guild.delete.first", session.User.Langue));
+
         }
 
-        session.User.InventoryComponent?.AddItemArray(room.RoomItemHandling.RemoveAllFurnitureToInventory(session));
+        var roomItems = room.RoomItemHandling.RemoveAllFurnitureToInventory(session, true);
+        if (roomItems.Count <= 0)
+        {
+            return;
+        }
+
+        foreach (var roomItem in roomItems)
+        {
+            GameClient itemOwner;
+
+            if (roomItem == null)
+            {
+                continue;
+            }
+
+
+            using var dbClient = DatabaseManager.Connection;
+
+            itemOwner = GameClientManager.GetClientByUserId(roomItem.UserId);
+            if (itemOwner == null)
+            {
+                ItemDao.UpdateRoomIdForItemIdAndUser(dbClient, roomItem.Id, roomId, roomItem.UserId, roomItem.Username);
+            }
+            else
+            {
+                if (itemOwner.User.Id == roomItem.UserId)
+                {
+
+                itemOwner.User.InventoryComponent.AddItem(dbClient, roomItem);
+                }
+            }
+        }
 
         RoomManager.UnloadRoom(room);
 

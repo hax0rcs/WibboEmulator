@@ -55,7 +55,7 @@ internal sealed class PickupObjectEvent : IPacketEvent
         }
         else
         {
-            var ownerItem = GameClientManager.GetClientByUserID(item.UserId);
+            var ownerItem = GameClientManager.GetClientByUserId(item.UserId);
             room.RoomItemHandling.RemoveFurniture(session, item.Id, true);
 
             if (ownerItem != null && ownerItem.User.Username != session.User.Username)
@@ -68,7 +68,7 @@ internal sealed class PickupObjectEvent : IPacketEvent
             }
             else
             {
-                ItemDao.UpdateRoomIdAndUserId(dbClient, item.Id, 0, item.UserId, item.Username);
+                ItemDao.UpdateRoomIdForItemIdAndUser(dbClient, item.Id, 0, item.UserId, item.Username);
             }
 
         }

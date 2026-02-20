@@ -91,13 +91,11 @@ internal sealed class PlaceObjectEvent : IPacketEvent
             }
 
             var item = new Item(userItem.Id, userItem.UserId, userItem.Username, room.Id, userItem.BaseItemId, userItem.ExtraData, userItem.Limited, userItem.LimitedStack, x, y, 0.0, rotation, "", room, userItem.Colour1, userItem.Colour2);
-            session.SendWhisper("1 usr: " + item.UserId + ", usrnm: " + item.Username);
-
             if (room.RoomItemHandling.SetFloorItem(session, item, x, y, rotation, true, false, true))
             {
                 using (var dbClient = DatabaseManager.Connection)
                 {
-                    ItemDao.UpdateRoomIdAndUserId(dbClient, itemId, room.Id, userItem.UserId, userItem.Username);
+                    ItemDao.UpdateRoomIdForItemIdAndUser(dbClient, itemId, room.Id, userItem.UserId, userItem.Username);
                 }
 
                 session.User.InventoryComponent.RemoveItem(itemId);
@@ -164,7 +162,7 @@ internal sealed class PlaceObjectEvent : IPacketEvent
                 {
                     using (var dbClient = DatabaseManager.Connection)
                     {
-                        ItemDao.UpdateRoomIdAndUserId(dbClient, itemId, room.Id, userItem.UserId, userItem.Username);
+                        ItemDao.UpdateRoomIdForItemIdAndUser(dbClient, itemId, room.Id, userItem.UserId, userItem.Username);
                     }
 
                     session.User.InventoryComponent.RemoveItem(itemId);

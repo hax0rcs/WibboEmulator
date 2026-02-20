@@ -8,9 +8,9 @@ internal sealed class ItemWallComposer : ServerPacket
     public ItemWallComposer(Item[] items, Room room)
         : base(ServerPacketHeader.ITEM_WALL)
     {
-        this.WriteInteger(room.RoomItemHandling.OwnersItems.Count);//total Owners
+        this.WriteInteger(room.RoomItemHandling.OwnersItems().Count);//total Owners
 
-        foreach (var ownerItem in room.RoomItemHandling.OwnersItems)
+        foreach (var ownerItem in room.RoomItemHandling.OwnersItems())
         {
             this.WriteInteger(ownerItem.Key);
             this.WriteString(ownerItem.Value);

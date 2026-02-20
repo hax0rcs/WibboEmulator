@@ -83,7 +83,7 @@ public class PlaceBuilderObjectEvent : IPacketEvent
 
         if (room.RoomItemHandling.SetFloorItem(session, newItem, x, y, rot, true, false, true))
         {
-            ItemDao.UpdateRoomIdAndUserId(DatabaseManager.Connection, newItem.Id, room.Id, newItem.UserId, newItem.Username);
+            ItemDao.UpdateRoomIdForItemIdAndUser(DatabaseManager.Connection, newItem.Id, room.Id, newItem.UserId, newItem.Username);
         }
         else
         {

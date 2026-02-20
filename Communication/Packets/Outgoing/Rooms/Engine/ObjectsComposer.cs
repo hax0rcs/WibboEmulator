@@ -10,9 +10,9 @@ internal sealed class ObjectsComposer : ServerPacket
     public ObjectsComposer(Item[] items, Room room)
         : base(ServerPacketHeader.FURNITURE_FLOOR)
     {
-        this.WriteInteger(room.RoomItemHandling.OwnersItems.Count);//total owners
+        this.WriteInteger(room.RoomItemHandling.OwnersItems().Count);//total owners
 
-        foreach (var ownerItem in room.RoomItemHandling.OwnersItems)
+        foreach (var ownerItem in room.RoomItemHandling.OwnersItems())
         {
             this.WriteInteger(ownerItem.Key);
             this.WriteString(ownerItem.Value);

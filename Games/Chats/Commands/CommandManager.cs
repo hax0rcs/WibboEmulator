@@ -3,6 +3,7 @@ namespace WibboEmulator.Games.Chats.Commands;
 using System.Data;
 using System.Text;
 using ButterflyEmulator.HabboHotel.Chats.Commands.User.Premium;
+using ButterflyEmulator.HabboHotel.Chats.Commands.User.Room;
 using Core.Language;
 using Database.Daos.Emulator;
 using GameClients;
@@ -363,7 +364,8 @@ public static class CommandManager
         Register(174, new TileCopy());
         Register(175, new TileMove());
         Register(176, new ChatIcon());
-        Register(178, new RemoveGroupChat());
-        Register(177, new Colour());
+        Register(177, new RemoveGroupChat());
+        Register(178, new Colour());
+        Register(179, new EjectAll());
     }
 }

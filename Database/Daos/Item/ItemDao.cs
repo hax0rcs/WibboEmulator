@@ -152,7 +152,7 @@ internal sealed class ItemDao
         "UPDATE item SET base_item = @BaseItem, extra_data = @ExtraData WHERE id = @ItemId",
         new { BaseItem = baseItem, ExtraData = extraData, ItemId = itemId });
 
-    internal static void UpdateRoomIdAndUserId(IDbConnection dbClient, int itemId, int roomId, int userId, string username) => dbClient.Execute(
+    internal static void UpdateRoomIdForItemIdAndUser(IDbConnection dbClient, int itemId, int roomId, int userId, string username) => dbClient.Execute(
         "UPDATE `item` SET room_id = '" + roomId + "', user_id = '" + userId + "', username = '" + username + "' WHERE id = '" + itemId + "'");
 
     internal static void UpdateRoomIdAndUserId(IDbConnection dbClient, int userId, int roomId) => dbClient.Execute(

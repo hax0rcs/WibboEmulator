@@ -523,7 +523,7 @@ public class GameMap
         }
 
         this.RemoveSpecialItem(item);
-        _ = this._room.RoomItemHandling.OwnersItems.TryRemove(item.UserId, out _);
+        _ = this._room.RoomItemHandling.OwnersItems().TryRemove(item.UserId, out _);
 
         var flag = false;
         foreach (var coord in item.GetAffectedTiles)
@@ -572,10 +572,7 @@ public class GameMap
 
         this.AddSpecialItems(item);
 
-        if (item.UserId > 0)
-        {
-            _ = this._room.RoomItemHandling.OwnersItems.TryAdd(item.UserId, item.Username);
-        }
+        _ = this._room.RoomItemHandling.OwnersItems().TryAdd(item.UserId, item.Username);
 
         switch (item.ItemData.InteractionType)
         {
@@ -732,6 +729,7 @@ public class GameMap
         var highestStack = 0.0;
         var deduct = false;
         var deductable = 0.0;
+
         foreach (var roomItem in itemsOnSquare)
         {
             if (roomItem.TotalHeight > highestStack)
@@ -749,8 +747,10 @@ public class GameMap
                 highestStack = roomItem.TotalHeight;
             }
         }
+
         double floorHeight = this.Model.SqFloorHeight[x, y];
         var stackHeight = highestStack - this.Model.SqFloorHeight[x, y];
+
         if (deduct)
         {
             stackHeight -= deductable;

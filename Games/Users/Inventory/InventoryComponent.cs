@@ -17,7 +17,6 @@ using Database.Daos.User;
 using Items;
 using Rooms.AI;
 using Utilities;
-using WibboEmulator.Games.Items.Interactors;
 
 public class InventoryComponent(User user) : IDisposable
 {
@@ -423,7 +422,7 @@ public class InventoryComponent(User user) : IDisposable
             return;
         }
 
-        if (roomItem.ItemData.ItemName.StartsWith("PntEx_") == false)
+        if (!roomItem.ItemData.ItemName.StartsWith("PntEx_"))
         {
             return;
         }
@@ -507,7 +506,7 @@ public class InventoryComponent(User user) : IDisposable
 
     public void AddItem(IDbConnection dbClient, Item item)
     {
-        ItemDao.UpdateRoomIdAndUserId(dbClient, item.Id, 0, user.Id, user.Username);
+        ItemDao.UpdateRoomIdForItemIdAndUser(dbClient, item.Id, 0, user.Id, user.Username);
 
         var userItem = new Item(item.Id, item.UserId, item.Username, 0, item.BaseItemId, item.ExtraData, item.Limited, item.LimitedStack, 0, 0, 0.0, 0, "", null, item.Colour1, item.Colour2);
         if (this.UserHoldsItem(item.Id))

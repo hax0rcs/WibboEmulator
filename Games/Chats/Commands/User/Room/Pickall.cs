@@ -15,7 +15,7 @@ internal sealed class Pickall : IChatCommand
             return;
         }
 
-        session.User.InventoryComponent.AddItemArray(room.RoomItemHandling.RemoveAllFurnitureToInventory(session));
+        session.User.InventoryComponent.AddItemArray(room.RoomItemHandling.RemoveAllFurnitureToInventory(session, false));
         session.SendPacket(new FurniListUpdateComposer());
     }
 }
