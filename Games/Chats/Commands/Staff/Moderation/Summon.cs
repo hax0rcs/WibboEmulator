@@ -28,7 +28,7 @@ internal sealed class Summon : IChatCommand
         if (!targetUser.User.IsTeleporting)
         {
             targetUser.User.IsTeleporting = true;
-            targetUser.User.TeleportingRoomID = room.RoomData.Id;
+            targetUser.User.TeleportingRoomId = room.RoomData.Id;
             targetUser.User.TeleporterId = 0;
 
             targetUser.SendPacket(new GetGuestRoomResultComposer(targetUser, room.RoomData, false, true));

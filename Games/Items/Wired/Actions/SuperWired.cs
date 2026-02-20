@@ -718,7 +718,7 @@ public class SuperWired(Item item, Room room) : WiredActionBase(item, room, (int
                         this.Room.RoomUserManager.RemoveUserFromRoom(user.Client, true, false);
 
                         user.Client.User.IsTeleporting = true;
-                        user.Client.User.TeleportingRoomID = roomId;
+                        user.Client.User.TeleportingRoomId = roomId;
                         user.Client.SendPacket(new RoomForwardComposer(roomId));
                     }
                 }
@@ -2109,7 +2109,7 @@ public class SuperWired(Item item, Room room) : WiredActionBase(item, room, (int
                     this.Room.RoomUserManager.RemoveUserFromRoom(roomUser.Client, true, false);
 
                     roomUser.Client.User.IsTeleporting = true;
-                    roomUser.Client.User.TeleportingRoomID = roomId;
+                    roomUser.Client.User.TeleportingRoomId = roomId;
                     roomUser.Client.SendPacket(new RoomForwardComposer(roomId));
                 }
                 break;

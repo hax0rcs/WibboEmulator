@@ -236,7 +236,7 @@ public class Group
                 continue;
             }
 
-            var client = GameClientManager.GetClientByUserID(groupUser);
+            var client = GameClientManager.GetClientByUserId(groupUser);
             client?.SendPacket(packet);
         }
     }

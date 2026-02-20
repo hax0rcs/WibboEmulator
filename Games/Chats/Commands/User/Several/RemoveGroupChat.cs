@@ -14,7 +14,7 @@ internal class RemoveGroupChat : IChatCommand
     {
         if (!int.TryParse(parameters[1], out var groupId))
         {
-            session.SendWhisper("ID fornecido é inválido!", false);
+            session.SendWhisper("Id fornecido é inválido!", false);
             return;
         }
 

@@ -14,7 +14,7 @@ internal sealed class UserSearchResultComposer : ServerPacket
             this.WriteInteger(search.UserId);
             this.WriteString(search.Username);
             this.WriteString(""); //motto
-            this.WriteBoolean(GameClientManager.GetClientByUserID(search.UserId) != null);
+            this.WriteBoolean(GameClientManager.GetClientByUserId(search.UserId) != null);
             this.WriteBoolean(false);
             this.WriteString(string.Empty);
             this.WriteInteger(0);
@@ -28,7 +28,7 @@ internal sealed class UserSearchResultComposer : ServerPacket
             this.WriteInteger(search.UserId);
             this.WriteString(search.Username);
             this.WriteString(""); //motto
-            this.WriteBoolean(GameClientManager.GetClientByUserID(search.UserId) != null);
+            this.WriteBoolean(GameClientManager.GetClientByUserId(search.UserId) != null);
             this.WriteBoolean(false);
             this.WriteString(string.Empty);
             this.WriteInteger(0);

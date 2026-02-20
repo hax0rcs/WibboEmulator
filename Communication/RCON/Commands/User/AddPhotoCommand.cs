@@ -26,7 +26,7 @@ internal sealed class AddPhotoCommand : IRCONCommand
             return false;
         }
 
-        var client = GameClientManager.GetClientByUserID(userId);
+        var client = GameClientManager.GetClientByUserId(userId);
         if (client == null)
         {
             return true;

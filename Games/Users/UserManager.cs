@@ -47,7 +47,7 @@ public static class UserManager
             return null;
         }
 
-        var client = GameClientManager.GetClientByUserID(userId);
+        var client = GameClientManager.GetClientByUserId(userId);
         if (client != null)
         {
             var user = client.User;

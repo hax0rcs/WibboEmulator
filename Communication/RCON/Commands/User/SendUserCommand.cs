@@ -33,7 +33,7 @@ internal sealed class SendUserCommand : IRCONCommand
             return false;
         }
 
-        var client = GameClientManager.GetClientByUserID(userId);
+        var client = GameClientManager.GetClientByUserId(userId);
         if (client == null || client.User == null)
         {
             return true;

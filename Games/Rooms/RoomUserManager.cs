@@ -29,7 +29,7 @@ using Events;
 public class RoomUserManager(Room room)
 {
     private readonly ConcurrentDictionary<string, RoomUser> _usersByUsername = new();
-    private readonly ConcurrentDictionary<int, RoomUser> _usersByUserID = new();
+    private readonly ConcurrentDictionary<int, RoomUser> _usersByUserId = new();
 
     private readonly ConcurrentDictionary<int, RoomUser> _users = new();
     private readonly ConcurrentDictionary<int, RoomUser> _pets = new();
@@ -37,7 +37,7 @@ public class RoomUserManager(Room room)
 
     private readonly List<int> _staffIds = [];
 
-    private int _primaryPrivateUserID = 1;
+    private int _primaryPrivateUserId = 1;
     public int BotPetCount => this._pets.Count + this._bots.Count;
 
     public event EventHandler OnUserEnter;
@@ -56,7 +56,7 @@ public class RoomUserManager(Room room)
 
     public RoomUser DeploySuperBot(RoomBot bot)
     {
-        var key = this._primaryPrivateUserID++;
+        var key = this._primaryPrivateUserId++;
         var roomUser = new RoomUser(0, room.Id, key, room);
 
         bot.Id = -key;
@@ -104,7 +104,7 @@ public class RoomUserManager(Room room)
 
     public RoomUser DeployBot(RoomBot bot, Pet petData)
     {
-        var key = this._primaryPrivateUserID++;
+        var key = this._primaryPrivateUserId++;
         var roomUser = new RoomUser(0, room.Id, key, room);
 
         _ = this._users.TryAdd(key, roomUser);
@@ -378,7 +378,7 @@ public class RoomUserManager(Room room)
             return false;
         }
 
-        var personalID = this._primaryPrivateUserID++;
+        var personalID = this._primaryPrivateUserId++;
 
         var user = new RoomUser(session.User.Id, room.Id, personalID, room)
         {
@@ -406,13 +406,13 @@ public class RoomUserManager(Room room)
             _ = this._usersByUsername.TryRemove(username.ToLower(), out _);
         }
 
-        if (this._usersByUserID.ContainsKey(userId))
+        if (this._usersByUserId.ContainsKey(userId))
         {
-            _ = this._usersByUserID.TryRemove(userId, out _);
+            _ = this._usersByUserId.TryRemove(userId, out _);
         }
 
         _ = this._usersByUsername.TryAdd(username.ToLower(), user);
-        _ = this._usersByUserID.TryAdd(userId, user);
+        _ = this._usersByUserId.TryAdd(userId, user);
 
         var roomModel = room.GameMap.Model;
         if (roomModel == null)
@@ -439,7 +439,7 @@ public class RoomUserManager(Room room)
 
             user.Client.User.IsTeleporting = false;
             user.Client.User.TeleporterId = 0;
-            user.Client.User.TeleportingRoomID = 0;
+            user.Client.User.TeleportingRoomId = 0;
         }
 
         if (!user.IsSpectator)
@@ -651,7 +651,7 @@ public class RoomUserManager(Room room)
         user.FreezeEndCounter = 0;
         user.Dispose();
 
-        _ = this._usersByUserID.TryRemove(user.UserId, out _);
+        _ = this._usersByUserId.TryRemove(user.UserId, out _);
         _ = this._usersByUsername.TryRemove(session.User.Username.ToLower(), out _);
     }
 
@@ -687,7 +687,7 @@ public class RoomUserManager(Room room)
 
     public RoomUser GetRoomUserByUserId(int id)
     {
-        if (this._usersByUserID.TryGetValue(id, out var value))
+        if (this._usersByUserId.TryGetValue(id, out var value))
         {
             return value;
         }
@@ -1373,7 +1373,7 @@ public class RoomUserManager(Room room)
 
         foreach (var user in toRemove)
         {
-            var clientByUserId = GameClientManager.GetClientByUserID(user.UserId);
+            var clientByUserId = GameClientManager.GetClientByUserId(user.UserId);
             if (clientByUserId != null)
             {
                 this.RemoveUserFromRoom(clientByUserId, true, false);
@@ -1649,7 +1649,7 @@ public class RoomUserManager(Room room)
     public void Destroy()
     {
         this._usersByUsername.Clear();
-        this._usersByUserID.Clear();
+        this._usersByUserId.Clear();
         this.OnUserEnter = null;
         this._pets.Clear();
         this._bots.Clear();

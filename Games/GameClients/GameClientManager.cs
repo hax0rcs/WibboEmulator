@@ -38,7 +38,7 @@ public static class GameClientManager
 
             foreach (var userId in StaffIds)
             {
-                var client = GetClientByUserID(userId);
+                var client = GetClientByUserId(userId);
                 if (client == null || client.User == null)
                 {
                     continue;
@@ -75,7 +75,7 @@ public static class GameClientManager
         }
     }
 
-    public static GameClient GetClientByUserID(int userID)
+    public static GameClient GetClientByUserId(int userID)
     {
         if (UserIDRegister.TryGetValue(userID, out var clientId))
         {
@@ -125,7 +125,7 @@ public static class GameClientManager
         var clientOnline = new List<GameClient>();
         foreach (var userID in users)
         {
-            var client = GetClientByUserID(userID);
+            var client = GetClientByUserId(userID);
             if (client != null)
             {
                 clientOnline.Add(client);
@@ -139,7 +139,7 @@ public static class GameClientManager
     {
         foreach (var userId in StaffIds)
         {
-            var client = GetClientByUserID(userId);
+            var client = GetClientByUserId(userId);
             if (client == null || client.User == null)
             {
                 continue;
@@ -328,7 +328,7 @@ public static class GameClientManager
 
     public static void LogClonesOut(int userId)
     {
-        var clientByUserId = GetClientByUserID(userId);
+        var clientByUserId = GetClientByUserId(userId);
         if (clientByUserId == null)
         {
             return;

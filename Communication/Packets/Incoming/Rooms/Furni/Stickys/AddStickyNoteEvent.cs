@@ -45,7 +45,7 @@ internal sealed class AddStickyNoteEvent : IPacketEvent
 
         using (var dbClient = DatabaseManager.Connection)
         {
-            ItemDao.UpdateRoomIdAndUserId(dbClient, id, room.Id, userItem.UserId, userItem.Username);
+            ItemDao.UpdateRoomIdForItemIdAndUser(dbClient, id, room.Id, userItem.UserId, userItem.Username);
         }
 
         session.User.InventoryComponent.RemoveItem(id);

@@ -29,9 +29,9 @@ internal sealed class OpenFlatConnectionEvent : IPacketEvent
             }
         }
 
-        if (session.User.IsTeleporting && session.User.TeleportingRoomID != roomId)
+        if (session.User.IsTeleporting && session.User.TeleportingRoomId != roomId)
         {
-            session.User.TeleportingRoomID = 0;
+            session.User.TeleportingRoomId = 0;
             session.User.IsTeleporting = false;
             session.User.TeleporterId = 0;
             session.SendPacket(new CloseConnectionComposer());
@@ -91,7 +91,7 @@ internal sealed class OpenFlatConnectionEvent : IPacketEvent
 
         if (!session.User.HasPermission("access_apartments_all"))
         {
-            if (!(session.User.HasPermission("access_apartments") && !ownerEnterNotAllowed.Contains(room.RoomData.OwnerName)) && !room.CheckRights(session, true) && !(session.User.IsTeleporting && session.User.TeleportingRoomID == room.Id))
+            if (!(session.User.HasPermission("access_apartments") && !ownerEnterNotAllowed.Contains(room.RoomData.OwnerName)) && !room.CheckRights(session, true) && !(session.User.IsTeleporting && session.User.TeleportingRoomId == room.Id))
             {
                 if (room.RoomData.Access == RoomAccess.Doorbell && !room.CheckRights(session))
                 {

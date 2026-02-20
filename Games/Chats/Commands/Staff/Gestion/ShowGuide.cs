@@ -20,7 +20,7 @@ internal sealed class ShowGuide : IChatCommand
             _ = stringBuilder.Append("Guide en service (" + HelpManager.Count + "):\r\r");
             foreach (var entry in HelpManager.GuidesOnDuty)
             {
-                var guide = GameClientManager.GetClientByUserID(entry.Key);
+                var guide = GameClientManager.GetClientByUserId(entry.Key);
                 if (guide == null)
                 {
                     continue;

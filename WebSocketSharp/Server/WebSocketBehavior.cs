@@ -204,15 +204,15 @@ public abstract class WebSocketBehavior : IWebSocketSession
     }
 
     /// <summary>
-    /// Gets the unique ID of a session.    /// </summary>
+    /// Gets the unique Id of a session.    /// </summary>
     /// <value>
     ///   <para>
-    ///   A <see cref="string"/> that represents the unique ID of the session.    ///   </para>
+    ///   A <see cref="string"/> that represents the unique Id of the session.    ///   </para>
     ///   <para>
     ///   <see langword="null"/> if the session has not started yet.
     ///   </para>
     /// </value>
-    public string ID { get; private set; }
+    public string Id { get; private set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the service ignores
@@ -356,12 +356,12 @@ public abstract class WebSocketBehavior : IWebSocketSession
 
     private void OnClose(object sender, CloseEventArgs e)
     {
-        if (this.ID == null)
+        if (this.Id == null)
         {
             return;
         }
 
-        _ = this.Sessions.Remove(this.ID);
+        _ = this.Sessions.Remove(this.Id);
 
         this.OnClose(e);
     }
@@ -372,9 +372,9 @@ public abstract class WebSocketBehavior : IWebSocketSession
 
     private void OnOpen(object sender, EventArgs e)
     {
-        this.ID = this.Sessions.Add(this);
+        this.Id = this.Sessions.Add(this);
 
-        if (this.ID == null)
+        if (this.Id == null)
         {
             this._websocket.Close(CloseStatusCode.Away);
 

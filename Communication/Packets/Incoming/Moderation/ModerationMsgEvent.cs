@@ -18,7 +18,7 @@ internal sealed class ModerationMsgEvent : IPacketEvent
         var userId = packet.PopInt();
         var message = packet.PopString();
 
-        var clientTarget = GameClientManager.GetClientByUserID(userId);
+        var clientTarget = GameClientManager.GetClientByUserId(userId);
         if (clientTarget == null)
         {
             return;

@@ -62,7 +62,7 @@ public static class CommandManager
             return false;
         }
 
-        if (!Commands.TryGetValue(cmdInfo.CommandID, out var cmd))
+        if (!Commands.TryGetValue(cmdInfo.CommandId, out var cmd))
         {
             return false;
         }

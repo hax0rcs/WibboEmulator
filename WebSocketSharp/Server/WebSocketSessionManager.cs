@@ -90,7 +90,7 @@ public class WebSocketSessionManager : IDisposable
     #region Public Properties
 
     /// <summary>
-    /// Gets the IDs for the active sessions in the WebSocket service.
+    /// Gets the Ids for the active sessions in the WebSocket service.
     /// </summary>
     /// <value>
     ///   <para>
@@ -98,10 +98,10 @@ public class WebSocketSessionManager : IDisposable
     ///   </para>
     ///   <para>
     ///   It provides an enumerator which supports the iteration over
-    ///   the collection of the IDs for the active sessions.
+    ///   the collection of the Ids for the active sessions.
     ///   </para>
     /// </value>
-    public IEnumerable<string> ActiveIDs
+    public IEnumerable<string> ActiveIds
     {
         get
         {
@@ -133,7 +133,7 @@ public class WebSocketSessionManager : IDisposable
     }
 
     /// <summary>
-    /// Gets the IDs for the sessions in the WebSocket service.
+    /// Gets the Ids for the sessions in the WebSocket service.
     /// </summary>
     /// <value>
     ///   <para>
@@ -141,10 +141,10 @@ public class WebSocketSessionManager : IDisposable
     ///   </para>
     ///   <para>
     ///   It provides an enumerator which supports the iteration over
-    ///   the collection of the IDs for the sessions.
+    ///   the collection of the Ids for the sessions.
     ///   </para>
     /// </value>
-    public IEnumerable<string> IDs
+    public IEnumerable<string> Ids
     {
         get
         {
@@ -166,7 +166,7 @@ public class WebSocketSessionManager : IDisposable
     }
 
     /// <summary>
-    /// Gets the IDs for the inactive sessions in the WebSocket service.
+    /// Gets the Ids for the inactive sessions in the WebSocket service.
     /// </summary>
     /// <value>
     ///   <para>
@@ -174,7 +174,7 @@ public class WebSocketSessionManager : IDisposable
     ///   </para>
     ///   <para>
     ///   It provides an enumerator which supports the iteration over
-    ///   the collection of the IDs for the inactive sessions.
+    ///   the collection of the Ids for the inactive sessions.
     ///   </para>
     /// </value>
     public IEnumerable<string> InactiveIDs
@@ -192,7 +192,7 @@ public class WebSocketSessionManager : IDisposable
     }
 
     /// <summary>
-    /// Gets the session instance with the specified ID.
+    /// Gets the session instance with the specified Id.
     /// </summary>
     /// <value>
     ///   <para>
@@ -204,7 +204,7 @@ public class WebSocketSessionManager : IDisposable
     ///   in the session.    ///   </para>
     /// </value>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session to find.
+    /// A <see cref="string"/> that specifies the Id of the session to find.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="id"/> is <see langword="null"/>.
@@ -426,7 +426,7 @@ public class WebSocketSessionManager : IDisposable
 
             var res = session.Context.WebSocket.Ping(frameAsBytes, this._waitTime);
 
-            ret.Add(session.ID, res);
+            ret.Add(session.Id, res);
         }
 
         return ret;
@@ -434,7 +434,7 @@ public class WebSocketSessionManager : IDisposable
 
     private bool CanSet() => this._state is ServerState.Ready or ServerState.Stop;
 
-    private static string CreateID() => Guid.NewGuid().ToString("N");
+    private static string CreateId() => Guid.NewGuid().ToString("N");
 
     private void SetSweepTimer(double interval)
     {
@@ -500,7 +500,7 @@ public class WebSocketSessionManager : IDisposable
                 return null;
             }
 
-            var id = CreateID();
+            var id = CreateId();
 
             this._sessions.Add(id, session);
 
@@ -919,10 +919,10 @@ public class WebSocketSessionManager : IDisposable
     }
 
     /// <summary>
-    /// Closes the session with the specified ID.
+    /// Closes the session with the specified Id.
     /// </summary>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session to close.
+    /// A <see cref="string"/> that specifies the Id of the session to close.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="id"/> is <see langword="null"/>.
@@ -947,10 +947,10 @@ public class WebSocketSessionManager : IDisposable
     }
 
     /// <summary>
-    /// Closes the session with the specified ID, code, and reason.
+    /// Closes the session with the specified Id, code, and reason.
     /// </summary>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session to close.
+    /// A <see cref="string"/> that specifies the Id of the session to close.
     /// </param>
     /// <param name="code">
     ///   <para>
@@ -1025,10 +1025,10 @@ public class WebSocketSessionManager : IDisposable
     }
 
     /// <summary>
-    /// Closes the session with the specified ID, code, and reason.
+    /// Closes the session with the specified Id, code, and reason.
     /// </summary>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session to close.
+    /// A <see cref="string"/> that specifies the Id of the session to close.
     /// </param>
     /// <param name="code">
     ///   <para>
@@ -1100,7 +1100,7 @@ public class WebSocketSessionManager : IDisposable
     /// received from the client within a time; otherwise, <c>false</c>.
     /// </returns>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="id"/> is <see langword="null"/>.
     /// </exception>
@@ -1139,7 +1139,7 @@ public class WebSocketSessionManager : IDisposable
     ///   </para>
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="id"/> is <see langword="null"/>.
     /// </exception>
@@ -1179,7 +1179,7 @@ public class WebSocketSessionManager : IDisposable
     /// An array of <see cref="byte"/> that specifies the binary data to send.
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <exception cref="ArgumentNullException">
     ///   <para>
     ///   <paramref name="id"/> is <see langword="null"/>.
@@ -1224,7 +1224,7 @@ public class WebSocketSessionManager : IDisposable
     /// A <see cref="string"/> that specifies the text data to send.
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <exception cref="ArgumentNullException">
     ///   <para>
     ///   <paramref name="id"/> is <see langword="null"/>.
@@ -1286,7 +1286,7 @@ public class WebSocketSessionManager : IDisposable
     /// An <see cref="int"/> that specifies the number of bytes to send.
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <exception cref="ArgumentNullException">
     ///   <para>
     ///   <paramref name="id"/> is <see langword="null"/>.
@@ -1355,7 +1355,7 @@ public class WebSocketSessionManager : IDisposable
     /// An array of <see cref="byte"/> that specifies the binary data to send.
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <param name="completed">
     ///   <para>
     ///   An <c>Action&lt;bool&gt;</c> delegate or <see langword="null"/>
@@ -1417,7 +1417,7 @@ public class WebSocketSessionManager : IDisposable
     /// A <see cref="string"/> that specifies the text data to send.
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <param name="completed">
     ///   <para>
     ///   An <c>Action&lt;bool&gt;</c> delegate or <see langword="null"/>
@@ -1495,7 +1495,7 @@ public class WebSocketSessionManager : IDisposable
     /// An <see cref="int"/> that specifies the number of bytes to send.
     /// </param>
     /// <param name="id">
-    /// A <see cref="string"/> that specifies the ID of the session.    /// </param>
+    /// A <see cref="string"/> that specifies the Id of the session.    /// </param>
     /// <param name="completed">
     ///   <para>
     ///   An <c>Action&lt;bool&gt;</c> delegate or <see langword="null"/>

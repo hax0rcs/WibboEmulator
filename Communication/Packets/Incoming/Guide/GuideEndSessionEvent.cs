@@ -10,7 +10,7 @@ internal sealed class GuideEndSessionEvent : IPacketEvent
 
     public void Parse(GameClient session, ClientPacket packet)
     {
-        var requester = GameClientManager.GetClientByUserID(session.User.GuideOtherUserId);
+        var requester = GameClientManager.GetClientByUserId(session.User.GuideOtherUserId);
 
         session.SendPacket(new OnGuideSessionEndedComposer(1));
 

@@ -27,7 +27,7 @@ public class UserFactory
 
         var userId = user.Id;
 
-        var client = GameClientManager.GetClientByUserID(userId);
+        var client = GameClientManager.GetClientByUserId(userId);
 
         if (client != null)
         {
@@ -66,7 +66,7 @@ public class UserFactory
 
     public static User GetUserData(IDbConnection dbClient, int userId)
     {
-        if (GameClientManager.GetClientByUserID(userId) != null)
+        if (GameClientManager.GetClientByUserId(userId) != null)
         {
             return null;
         }

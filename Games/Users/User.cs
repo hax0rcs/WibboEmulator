@@ -76,7 +76,7 @@ public class User : IDisposable, IEquatable<User>
     public int HomeRoom { get; set; }
     public int LastOnline { get; set; }
     public bool IsTeleporting { get; set; }
-    public int TeleportingRoomID { get; set; }
+    public int TeleportingRoomId { get; set; }
     public int TeleporterId { get; set; }
     public List<int> ClientVolume { get; set; }
     public Language Langue { get; set; }
@@ -491,7 +491,7 @@ public class User : IDisposable, IEquatable<User>
 
         if (this.GuideOtherUserId != 0)
         {
-            var requester = GameClientManager.GetClientByUserID(this.GuideOtherUserId);
+            var requester = GameClientManager.GetClientByUserId(this.GuideOtherUserId);
             if (requester != null)
             {
                 requester.SendPacket(new OnGuideSessionEndedComposer(1));

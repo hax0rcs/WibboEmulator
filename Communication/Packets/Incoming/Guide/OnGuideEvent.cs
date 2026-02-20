@@ -33,7 +33,7 @@ internal sealed class OnGuideEvent : IPacketEvent
 
         HelpManager.GuideLeftService(guideId);
 
-        var guide = GameClientManager.GetClientByUserID(guideId);
+        var guide = GameClientManager.GetClientByUserId(guideId);
 
         session.SendPacket(new OnGuideSessionAttachedComposer(false, userId, message, 30));
         guide.SendPacket(new OnGuideSessionAttachedComposer(true, userId, message, 15));

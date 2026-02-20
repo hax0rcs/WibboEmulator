@@ -259,7 +259,7 @@ public static class ModerationManager
             return;
         }
 
-        var clientByUserId = GameClientManager.GetClientByUserID(ticket.SenderId);
+        var clientByUserId = GameClientManager.GetClientByUserId(ticket.SenderId);
 
         TicketStatusType newStatus;
         string messageAlert;
@@ -360,7 +360,7 @@ public static class ModerationManager
 
     public static void KickUser(GameClient modSession, int userId, string message, bool soft)
     {
-        var clientByUserId = GameClientManager.GetClientByUserID(userId);
+        var clientByUserId = GameClientManager.GetClientByUserId(userId);
         if (clientByUserId == null || !clientByUserId.User.InRoom || clientByUserId.User.Id == modSession.User.Id)
         {
             return;
@@ -397,7 +397,7 @@ public static class ModerationManager
 
     public static void BanUser(GameClient modSession, int userId, int lengthSeconds, string message)
     {
-        var clientByUserId = GameClientManager.GetClientByUserID(userId);
+        var clientByUserId = GameClientManager.GetClientByUserId(userId);
         if (clientByUserId == null || clientByUserId.User.Id == modSession.User.Id)
         {
             return;

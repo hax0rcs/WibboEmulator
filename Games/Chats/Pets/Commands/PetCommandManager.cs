@@ -26,7 +26,7 @@ public static class PetCommandManager
     {
         if (PetCommands.TryGetValue(input, out var petCommand))
         {
-            return petCommand.CommandID;
+            return petCommand.CommandId;
         }
         else
         {

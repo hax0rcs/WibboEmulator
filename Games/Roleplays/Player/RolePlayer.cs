@@ -205,7 +205,7 @@ public class RolePlayer
 
     public void SendPacket(IServerPacket message)
     {
-        var session = GameClientManager.GetClientByUserID(this._id);
+        var session = GameClientManager.GetClientByUserId(this._id);
         session?.SendPacket(message);
     }
 
@@ -523,7 +523,7 @@ public class RolePlayer
                     if (rpManager.PrisonId > 0 && !user.Client.User.IsTeleporting)
                     {
                         user.Client.User.IsTeleporting = true;
-                        user.Client.User.TeleportingRoomID = rpManager.PrisonId;
+                        user.Client.User.TeleportingRoomId = rpManager.PrisonId;
                         user.Client.SendPacket(new RoomForwardComposer(rpManager.PrisonId));
                     }
                 }
@@ -547,7 +547,7 @@ public class RolePlayer
                     if (rpManager.HopitalId > 0 && !user.Client.User.IsTeleporting)
                     {
                         user.Client.User.IsTeleporting = true;
-                        user.Client.User.TeleportingRoomID = rpManager.HopitalId;
+                        user.Client.User.TeleportingRoomId = rpManager.HopitalId;
                         user.Client.SendPacket(new RoomForwardComposer(rpManager.HopitalId));
                     }
                 }

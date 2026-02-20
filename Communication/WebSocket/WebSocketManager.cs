@@ -63,7 +63,7 @@ public static class WebSocketManager
 
         AlterIpConnectionCount(ip, GetAmountOfConnectionFromIp(ip) - 1);
 
-        GameClientManager.DisconnectConnection(connection.ID);
+        GameClientManager.DisconnectConnection(connection.Id);
     }
 
     public static void CreatedClient(GameWebSocket connection)
@@ -81,7 +81,7 @@ public static class WebSocketManager
         var connectionCount = GetAmountOfConnectionFromIp(ip);
         if (connectionCount <= 10)
         {
-            GameClientManager.CreateAndStartClient(connection.ID, connection);
+            GameClientManager.CreateAndStartClient(connection.Id, connection);
         }
         else
         {

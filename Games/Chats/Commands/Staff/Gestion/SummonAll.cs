@@ -23,7 +23,7 @@ internal sealed class SummonAll : IChatCommand
                 }
 
                 client.User.IsTeleporting = true;
-                client.User.TeleportingRoomID = room.RoomData.Id;
+                client.User.TeleportingRoomId = room.RoomData.Id;
                 client.User.TeleporterId = 0;
 
                 client.SendPacket(new GetGuestRoomResultComposer(client, room.RoomData, false, true));

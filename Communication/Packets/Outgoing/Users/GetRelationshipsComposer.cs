@@ -33,7 +33,7 @@ internal sealed class GetRelationshipsComposer : ServerPacket
             {
                 this.WriteInteger(0);
                 this.WriteInteger(0);
-                this.WriteInteger(0); // Their ID
+                this.WriteInteger(0); // Their Id
                 this.WriteString("Placeholder");
                 this.WriteString("hr-115-42.hd-190-1.ch-215-62.lg-285-91.sh-290-62");
             }
@@ -41,7 +41,7 @@ internal sealed class GetRelationshipsComposer : ServerPacket
             {
                 this.WriteInteger(rel.Type);
                 this.WriteInteger(rel.Type == 1 ? loves : rel.Type == 2 ? likes : rel.Type == 3 ? hates : poops);
-                this.WriteInteger(rel.UserId); // Their ID
+                this.WriteInteger(rel.UserId); // Their Id
                 this.WriteString(hHab.Username);
                 this.WriteString(hHab.Look);
             }

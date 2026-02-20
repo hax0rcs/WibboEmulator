@@ -22,5 +22,5 @@ public class TradeUser(int userId, int roomId)
         }
     }
 
-    public GameClient Client => GameClientManager.GetClientByUserID(this.UserId);
+    public GameClient Client => GameClientManager.GetClientByUserId(this.UserId);
 }

@@ -138,7 +138,7 @@ internal sealed class PurchaseFromCatalogAsGiftEvent : IPacketEvent
         var giveItem = ItemFactory.CreateSingleItem(dbClient, presentData, user, ed, newItemId);
         if (giveItem != null)
         {
-            var receiver = GameClientManager.GetClientByUserID(user.Id);
+            var receiver = GameClientManager.GetClientByUserId(user.Id);
             receiver?.User.InventoryComponent.TryAddItem(giveItem);
 
             if (user.Id != session.User.Id && !string.IsNullOrWhiteSpace(giftMessage))

@@ -3,9 +3,9 @@ namespace WibboEmulator.Games.Permissions;
 using GameClients;
 using Rooms;
 
-public struct AuthorizationCommands(int commandID, string input, int rank, string descriptionFr, string descriptionEn, string descriptionBr)
+public struct AuthorizationCommands(int commandId, string input, int rank, string descriptionFr, string descriptionEn, string descriptionBr)
 {
-    public int CommandID { get; private set; } = commandID;
+    public int CommandId { get; private set; } = commandId;
     public string Input { get; private set; } = input;
     public int MinRank { get; private set; } = rank;
     public string DescriptionFr { get; private set; } = descriptionFr;

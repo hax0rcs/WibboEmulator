@@ -10,14 +10,14 @@ internal sealed class RoomDance : IChatCommand
     {
         if (parameters.Length == 1)
         {
-            session.SendWhisper("Entrer une dance ID (1-4)");
+            session.SendWhisper("Entrer une dance Id (1-4)");
             return;
         }
 
         var danceId = Convert.ToInt32(parameters[1]);
         if (danceId is < 0 or > 4)
         {
-            session.SendWhisper("Entrer une dance ID (1-4)");
+            session.SendWhisper("Entrer une dance Id (1-4)");
             return;
         }
 

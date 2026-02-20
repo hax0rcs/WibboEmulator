@@ -24,7 +24,7 @@ internal sealed partial class EventHaCommand : IRCONCommand
             return false;
         }
 
-        var client = GameClientManager.GetClientByUserID(userId);
+        var client = GameClientManager.GetClientByUserId(userId);
         if (client == null || client.User.Room == null)
         {
             return true;

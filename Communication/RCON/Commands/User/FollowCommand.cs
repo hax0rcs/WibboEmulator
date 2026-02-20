@@ -32,13 +32,13 @@ internal sealed class FollowCommand : IRCONCommand
             return false;
         }
 
-        var client = GameClientManager.GetClientByUserID(userId);
+        var client = GameClientManager.GetClientByUserId(userId);
         if (client == null)
         {
             return true;
         }
 
-        var clientTwo = GameClientManager.GetClientByUserID(userIdTwo);
+        var clientTwo = GameClientManager.GetClientByUserId(userIdTwo);
         if (clientTwo == null || clientTwo.User == null)
         {
             return true;

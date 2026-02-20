@@ -26,7 +26,7 @@ internal sealed class RoomBuy : IChatCommand
         session.User.WibboPoints -= room.RoomData.SellPrice;
         session.SendPacket(new ActivityPointNotificationComposer(session.User.WibboPoints, 0, 105));
 
-        var clientOwner = GameClientManager.GetClientByUserID(room.RoomData.OwnerId);
+        var clientOwner = GameClientManager.GetClientByUserId(room.RoomData.OwnerId);
         if (clientOwner != null && clientOwner.User != null)
         {
             clientOwner.User.WibboPoints += room.RoomData.SellPrice;

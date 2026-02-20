@@ -19,7 +19,7 @@ internal sealed class GetModeratorUserChatlogEvent : IPacketEvent
 
         var userId = packet.PopInt();
 
-        var clientByUserId = GameClientManager.GetClientByUserID(userId);
+        var clientByUserId = GameClientManager.GetClientByUserId(userId);
         if (clientByUserId == null || clientByUserId.User == null)
         {
             var sortedMessages = new List<ChatlogEntry>();

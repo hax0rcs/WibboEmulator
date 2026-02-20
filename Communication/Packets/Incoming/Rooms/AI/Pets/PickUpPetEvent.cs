@@ -90,7 +90,7 @@ internal sealed class PickUpPetEvent : IPacketEvent
 
         if (petData.OwnerId != session.User.Id)
         {
-            var target = GameClientManager.GetClientByUserID(petData.OwnerId);
+            var target = GameClientManager.GetClientByUserId(petData.OwnerId);
             if (target != null)
             {
                 _ = target.User.InventoryComponent.TryAddPet(pet.PetData);

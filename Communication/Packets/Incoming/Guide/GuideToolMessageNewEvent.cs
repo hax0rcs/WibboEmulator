@@ -11,7 +11,7 @@ internal sealed class GuideToolMessageNewEvent : IPacketEvent
     {
         var message = packet.PopString();
 
-        var requester = GameClientManager.GetClientByUserID(session.User.GuideOtherUserId);
+        var requester = GameClientManager.GetClientByUserId(session.User.GuideOtherUserId);
         if (requester == null)
         {
             return;

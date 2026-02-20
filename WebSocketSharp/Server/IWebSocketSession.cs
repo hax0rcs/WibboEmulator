@@ -60,10 +60,10 @@ public interface IWebSocketSession
     WebSocketContext Context { get; }
 
     /// <summary>
-    /// Gets the unique ID of the session.    /// </summary>
+    /// Gets the unique Id of the session.    /// </summary>
     /// <value>
-    /// A <see cref="string"/> that represents the unique ID of the session.    /// </value>
-    string ID { get; }
+    /// A <see cref="string"/> that represents the unique Id of the session.    /// </value>
+    string Id { get; }
 
     /// <summary>
     /// Gets the name of the WebSocket subprotocol for the session.    /// </summary>

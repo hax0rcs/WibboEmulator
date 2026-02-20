@@ -15,7 +15,7 @@ public class MessengerBuddy(int userId, string username, string look, int relati
 
     public void UpdateUser()
     {
-        var client = GameClientManager.GetClientByUserID(this.UserId);
+        var client = GameClientManager.GetClientByUserId(this.UserId);
         if (client != null && client.User != null && client.User.Messenger != null && !client.User.Messenger.AppearOffline)
         {
             this.IsOnline = true;

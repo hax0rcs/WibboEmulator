@@ -11,7 +11,7 @@ internal sealed class OnGuideSessionDetachedEvent : IPacketEvent
     {
         var state = packet.PopBoolean();
 
-        var requester = GameClientManager.GetClientByUserID(session.User.GuideOtherUserId);
+        var requester = GameClientManager.GetClientByUserId(session.User.GuideOtherUserId);
 
         if (!state)
         {

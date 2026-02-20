@@ -16,7 +16,7 @@ internal sealed class GetModeratorUserRoomVisitsEvent : IPacketEvent
 
         var userId = packet.PopInt();
 
-        var clientTarget = GameClientManager.GetClientByUserID(userId);
+        var clientTarget = GameClientManager.GetClientByUserId(userId);
 
         if (clientTarget == null)
         {

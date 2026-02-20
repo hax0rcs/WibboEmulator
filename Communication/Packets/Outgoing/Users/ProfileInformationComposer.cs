@@ -27,7 +27,7 @@ internal sealed class ProfileInformationComposer : ServerPacket
         this.WriteInteger(friendCount); // Friend Count
         this.WriteBoolean(habbo.Id != session.User.Id && session.User.Messenger.FriendshipExists(habbo.Id)); //  Is friend
         this.WriteBoolean(habbo.Id != session.User.Id && !session.User.Messenger.FriendshipExists(habbo.Id) && session.User.Messenger.RequestExists(habbo.Id)); // Sent friend request
-        this.WriteBoolean(GameClientManager.GetClientByUserID(habbo.Id) != null);
+        this.WriteBoolean(GameClientManager.GetClientByUserId(habbo.Id) != null);
 
         this.WriteInteger(groups.Count);
         foreach (var group in groups)

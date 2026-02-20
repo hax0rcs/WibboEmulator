@@ -39,7 +39,7 @@ public class GameWebSocket : WebSocketBehavior
                 return;
             }
 
-            var client = GameClientManager.GetClientById(this.ID);
+            var client = GameClientManager.GetClientById(this.Id);
 
             if (client == null)
             {

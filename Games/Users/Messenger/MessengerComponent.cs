@@ -192,7 +192,7 @@ public class MessengerComponent(User user) : IDisposable
         }
 
         this.OnNewFriendship(friendID);
-        var clientByUserId = GameClientManager.GetClientByUserID(friendID);
+        var clientByUserId = GameClientManager.GetClientByUserId(friendID);
         if (clientByUserId == null || clientByUserId.User.Messenger == null)
         {
             return;
@@ -214,7 +214,7 @@ public class MessengerComponent(User user) : IDisposable
         }
 
         this.OnDestroyFriendship(friendID);
-        var clientByUserId = GameClientManager.GetClientByUserID(friendID);
+        var clientByUserId = GameClientManager.GetClientByUserId(friendID);
         if (clientByUserId == null || clientByUserId.User.Messenger == null)
         {
             return;
@@ -225,7 +225,7 @@ public class MessengerComponent(User user) : IDisposable
 
     public void OnNewFriendship(int friendID)
     {
-        var clientByUserId = GameClientManager.GetClientByUserID(friendID);
+        var clientByUserId = GameClientManager.GetClientByUserId(friendID);
         MessengerBuddy friend;
         if (clientByUserId == null || clientByUserId.User == null)
         {
@@ -319,7 +319,7 @@ public class MessengerComponent(User user) : IDisposable
                 MessengerRequestDao.Replace(dbClient, user.Id, sender);
             }
 
-            var clientByUserId = GameClientManager.GetClientByUserID(sender);
+            var clientByUserId = GameClientManager.GetClientByUserId(sender);
             if (clientByUserId == null || clientByUserId.User == null)
             {
                 return false;
@@ -349,7 +349,7 @@ public class MessengerComponent(User user) : IDisposable
     {
         foreach (var toId in toIds)
         {
-            var userClient = GameClientManager.GetClientByUserID(toId);
+            var userClient = GameClientManager.GetClientByUserId(toId);
             if (userClient == null)
             {
                 continue;
@@ -374,7 +374,7 @@ public class MessengerComponent(User user) : IDisposable
             return;
         }
 
-        var client = GameClientManager.GetClientByUserID(toId);
+        var client = GameClientManager.GetClientByUserId(toId);
         if (client == null || client.User == null || client.User.Messenger == null)
         {
             using var dbClient = DatabaseManager.Connection;
@@ -394,7 +394,7 @@ public class MessengerComponent(User user) : IDisposable
 
         if (messageList.Count != 0)
         {
-            var client = GameClientManager.GetClientByUserID(user.Id);
+            var client = GameClientManager.GetClientByUserId(user.Id);
             if (client == null)
             {
                 return;
@@ -415,5 +415,5 @@ public class MessengerComponent(User user) : IDisposable
 
     public List<Relationship> Relationships => [.. this.Relation.Values];
 
-    private GameClient Client => GameClientManager.GetClientByUserID(user.Id);
+    private GameClient Client => GameClientManager.GetClientByUserId(user.Id);
 }

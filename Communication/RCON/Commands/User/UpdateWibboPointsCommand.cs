@@ -32,7 +32,7 @@ internal sealed class UpdateWibboPointsCommand : IRCONCommand
             return false;
         }
 
-        var client = GameClientManager.GetClientByUserID(userid);
+        var client = GameClientManager.GetClientByUserId(userid);
         if (client == null)
         {
             return true;

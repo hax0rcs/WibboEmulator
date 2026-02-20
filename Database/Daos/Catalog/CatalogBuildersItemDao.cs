@@ -10,7 +10,7 @@ internal sealed class CatalogBuildersItemDao
         FROM `catalog_bc_item`
         LEFT JOIN `catalog_item_limited`
         ON (`catalog_item_limited`.catalog_item_id = id)
-        ORDER by ID DESC"
+        ORDER by Id DESC"
     ).ToList();
 }
 

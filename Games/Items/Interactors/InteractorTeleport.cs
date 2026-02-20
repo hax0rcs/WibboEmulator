@@ -133,7 +133,7 @@ public class InteractorTeleport : FurniInteractor
                             roomUserTarget.Room.RoomUserManager.RemoveUserFromRoom(roomUserTarget.Client, true, false);
 
                             roomUserTarget.Client.User.IsTeleporting = true;
-                            roomUserTarget.Client.User.TeleportingRoomID = teleRoomId;
+                            roomUserTarget.Client.User.TeleportingRoomId = teleRoomId;
                             roomUserTarget.Client.User.TeleporterId = linkedTele;
                             roomUserTarget.Client.SendPacket(new RoomForwardComposer(teleRoomId));
                         }

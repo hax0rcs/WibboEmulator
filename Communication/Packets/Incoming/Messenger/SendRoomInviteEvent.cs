@@ -59,7 +59,7 @@ internal sealed class SendRoomInviteEvent : IPacketEvent
         {
             if (session.User.Messenger.FriendshipExists(userId))
             {
-                var clientByUserId = GameClientManager.GetClientByUserID(userId);
+                var clientByUserId = GameClientManager.GetClientByUserId(userId);
                 if (clientByUserId == null || clientByUserId.User.IgnoreRoomInvites)
                 {
                     break;

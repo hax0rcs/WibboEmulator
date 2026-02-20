@@ -11,7 +11,7 @@ internal sealed class FollowFriendEvent : IPacketEvent
     public void Parse(GameClient session, ClientPacket packet)
     {
         var userId = packet.PopInt();
-        var clientByUserId = GameClientManager.GetClientByUserID(userId);
+        var clientByUserId = GameClientManager.GetClientByUserId(userId);
         if (clientByUserId == null || clientByUserId.User == null || !clientByUserId.User.InRoom || (clientByUserId.User.HideInRoom && !session.User.HasPermission("mod")))
         {
             return;

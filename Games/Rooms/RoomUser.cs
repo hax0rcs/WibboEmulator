@@ -214,7 +214,7 @@ public class RoomUser : IEquatable<RoomUser>
 
         if (!this.IsBot)
         {
-            this.Client = GameClientManager.GetClientByUserID(this.UserId);
+            this.Client = GameClientManager.GetClientByUserId(this.UserId);
         }
     }
 
