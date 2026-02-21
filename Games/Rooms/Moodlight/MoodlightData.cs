@@ -4,7 +4,7 @@ using System.Text;
 using Database;
 using Database.Daos.Item;
 
-public class MoodlightData(int itemId, bool enabled, int currentPreset, string presetOne, string presetTwo, string presetThree)
+public class MoodlightData(int itemId, bool enabled, int currentPreset, string presetOne, string presetTwo, string presetThree, bool ignoreDefaultColours)
 {
     public int ItemId { get; set; } = itemId;
     public int CurrentPreset { get; set; } = currentPreset;
@@ -12,9 +12,9 @@ public class MoodlightData(int itemId, bool enabled, int currentPreset, string p
 
     public List<MoodlightPreset> Presets { get; set; } =
         [
-            GeneratePreset(presetOne),
-            GeneratePreset(presetTwo),
-            GeneratePreset(presetThree)
+            GeneratePreset(presetOne, ignoreDefaultColours),
+            GeneratePreset(presetTwo, ignoreDefaultColours),
+            GeneratePreset(presetThree, ignoreDefaultColours)
         ];
 
     public void Enable() => this.Enabled = true;
@@ -23,7 +23,7 @@ public class MoodlightData(int itemId, bool enabled, int currentPreset, string p
 
     public void UpdatePreset(int preset, string color, int intensity, bool bgOnly, bool inDb = true)
     {
-        if (!IsValidColor(color) || !IsValidIntensity(intensity))
+        if ((!IsValidColor(color) && !ignoreDefaultColours) || (!IsValidIntensity(intensity)))
         {
             return;
         }
@@ -46,7 +46,7 @@ public class MoodlightData(int itemId, bool enabled, int currentPreset, string p
         this.GetPreset(preset).BackgroundOnly = bgOnly;
     }
 
-    public static MoodlightPreset GeneratePreset(string data)
+    public static MoodlightPreset GeneratePreset(string data, bool ignoreDefaultColours)
     {
         if (!data.Contains(','))
         {
@@ -60,7 +60,7 @@ public class MoodlightData(int itemId, bool enabled, int currentPreset, string p
             return new MoodlightPreset("#000000", 0, false);
         }
 
-        if (!IsValidColor(bits[0]))
+        if (!ignoreDefaultColours && !IsValidColor(bits[0]))
         {
             bits[0] = "#000000";
         }

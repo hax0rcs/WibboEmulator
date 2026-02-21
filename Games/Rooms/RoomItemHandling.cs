@@ -16,6 +16,7 @@ using Map;
 using Map.Movement;
 using Moodlight;
 using Utilities;
+using WibboEmulator.Core.Settings;
 
 public class RoomItemHandling(Room room)
 {
@@ -265,7 +266,7 @@ public class RoomItemHandling(Room room)
                     moodlightPresetTwo = item.PresetTwo;
                     moodlightPresetThree = item.PresetThree;
 
-                    room.MoodlightData = new MoodlightData(roomItem.Id, moodlightEnabled, moodlightCurrentPreset, moodlightPresetOne, moodlightPresetTwo, moodlightPresetThree);
+                    room.MoodlightData = new MoodlightData(roomItem.Id, moodlightEnabled, moodlightCurrentPreset, moodlightPresetOne, moodlightPresetTwo, moodlightPresetThree, SettingsManager.GetData<bool>("ignore.default.dimmer.colours"));
                     roomItem.ExtraData = room.MoodlightData.GenerateExtraData();
                 }
             }
@@ -854,7 +855,7 @@ public class RoomItemHandling(Room room)
                 var moodlightPresetTwo = moodlightRow != null ? moodlightRow.PresetTwo : "#000000,255,0";
                 var moodlightPresetThree = moodlightRow != null ? moodlightRow.PresetThree : "#000000,255,0";
 
-                room.MoodlightData = new MoodlightData(item.Id, moodlightEnabled, moodlightCurrentPreset, moodlightPresetOne, moodlightPresetTwo, moodlightPresetThree);
+                room.MoodlightData = new MoodlightData(item.Id, moodlightEnabled, moodlightCurrentPreset, moodlightPresetOne, moodlightPresetTwo, moodlightPresetThree, SettingsManager.GetData<bool>("ignore.default.dimmer.colours"));
                 item.ExtraData = room.MoodlightData.GenerateExtraData();
             }
             _ = this._wallItems.TryAdd(item.Id, item);
