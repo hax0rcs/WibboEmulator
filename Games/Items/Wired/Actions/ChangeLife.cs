@@ -34,7 +34,7 @@ public class ChangeLife : WiredActionBase, IWired, IWiredEffect, IWiredCycleable
                 case LifeOperatorAction.Subtraction:
                     this.AdjustLife(user, life, (current, value) => Math.Max(current - value, 0));
                     break;
-                /*case LifeOperatorAction.Multiplication:
+                case LifeOperatorAction.Multiplication:
                     this.AdjustLife(user, life, (current, value) => Math.Min(current * value, MAX_LIFE));
                     break;
                 case LifeOperatorAction.Division:
@@ -48,7 +48,7 @@ public class ChangeLife : WiredActionBase, IWired, IWiredEffect, IWiredCycleable
                     {
                         this.AdjustLife(user, life, (current, value) => current % value);
                     }
-                    break;*/
+                    break;
                 case LifeOperatorAction.Replace:
                     this.ApplyLife(user, life);
                     break;
@@ -73,12 +73,35 @@ public class ChangeLife : WiredActionBase, IWired, IWiredEffect, IWiredCycleable
 
     public void LoadFromDatabase(string wiredTriggerData, string wiredTriggerData2, string wiredTriggersItem, bool wiredAllUserTriggerable, int wiredDelay)
     {
-        if (int.TryParse(wiredTriggerData2.Split(';')[0], out var option))
+        if (!string.IsNullOrEmpty(wiredTriggerData2))
         {
-            this.SetIntParam(0, option);
+            var data = wiredTriggerData2.Split(';');
+            if (data.Length > 0)
+            {
+                if (int.TryParse(data[0], out var option))
+                {
+                    this.SetIntParam(0, option);
+                }
+                else
+                {
+                    this.SetIntParam(0, 0);
+                }
+            }
+
+            if (data.Length > 1)
+            {
+                this.StringParam = data[1];
+            }
+            else
+            {
+                this.StringParam = string.Empty;
+            }
+
+            return;
         }
 
-        this.StringParam = wiredTriggerData2.Split(';')[1];
+        this.SetIntParam(0, 0);
+        this.StringParam = string.Empty;
     }
 
     private void AdjustLife(RoomUser user, int life, Func<int, int, int> lifeAdjustment)
