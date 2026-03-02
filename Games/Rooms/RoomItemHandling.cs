@@ -645,8 +645,10 @@ public class RoomItemHandling(Room room)
         var buildToolEnable = false;
         var buildToolStackHeight = false;
         var buildToolHeight = 1.0;
+
         var pileMagic = false;
         var pileWalk = false;
+
         var tileMove = false;
         var tileCopy = false;
 
@@ -668,6 +670,7 @@ public class RoomItemHandling(Room room)
                 buildToolEnable = roomUser.BuildToolEnable;
                 buildToolStackHeight = roomUser.BuildToolStackHeight;
                 buildToolHeight = roomUser.BuildToolHeight;
+
                 tileMove = roomUser.TileMove;
                 tileCopy = roomUser.TileCopy;
             }
@@ -707,9 +710,14 @@ public class RoomItemHandling(Room room)
                     }
                     else
                     {
-                        if (roomItem.ItemData.InteractionType == InteractionType.PILE_WALK)
+                        if (roomItem.ItemData.InteractionType == InteractionType.PILE_WALK || (room.RoomData.HideWireds && WiredUtillity.TypeIsWired(roomItem.ItemData.InteractionType)))
                         {
                             pZ -= roomItem.Height;
+
+                            if (pZ < 0.0)
+                            {
+                                pZ = 0.0;
+                            }
                         }
                         else
                         {

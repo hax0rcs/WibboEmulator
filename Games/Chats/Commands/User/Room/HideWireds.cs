@@ -1,10 +1,10 @@
 namespace WibboEmulator.Games.Chats.Commands.User.Room;
 
 using Core.Language;
-using Database;
-using Database.Daos.Room;
 using GameClients;
 using Rooms;
+using WibboEmulator.Communication.Packets.Outgoing.Rooms.Engine;
+using WibboEmulator.Games.Items.Wired;
 
 internal sealed class HideWireds : IChatCommand
 {
@@ -12,18 +12,31 @@ internal sealed class HideWireds : IChatCommand
     {
         room.RoomData.HideWireds = !room.RoomData.HideWireds;
 
-        using (var dbClient = DatabaseManager.Connection)
+        foreach (var roomItem in room.RoomItemHandling.FloorItems)
         {
-            RoomDao.UpdateHideWireds(dbClient, room.Id, room.RoomData.HideWireds);
+            if (room.RoomData.HideWireds)
+            {
+                if (WiredUtillity.TypeIsWired(roomItem.ItemData.InteractionType) || WiredUtillity.AllowHideWiredType(roomItem.ItemData.InteractionType))
+                {
+                    room.SendPacket(new ObjectRemoveComposer(roomItem.Id, 0));
+                }
+                else
+                {
+                    room.SendPacket(new ObjectAddComposer(roomItem, roomItem.Username, roomItem.UserId));
+                }
+            }
+            else
+            {
+                if (WiredUtillity.TypeIsWired(roomItem.ItemData.InteractionType) || WiredUtillity.AllowHideWiredType(roomItem.ItemData.InteractionType))
+                {
+                    room.SendPacket(new ObjectAddComposer(roomItem, roomItem.Username, roomItem.UserId));
+                }
+            }
         }
 
-        if (room.RoomData.HideWireds)
-        {
-            session.SendWhisper(LanguageManager.TryGetValue("cmd.hidewireds.true", session.Language));
-        }
-        else
-        {
-            session.SendWhisper(LanguageManager.TryGetValue("cmd.hidewireds.false", session.Language));
-        }
+        room.GameMap.GenerateMaps();
+        room.RoomUserManager.UpdateUserStatusses();
+
+        session.SendWhisper(room.RoomData.HideWireds ? LanguageManager.TryGetValue("cmd.hidewireds.true", session.Language) : LanguageManager.TryGetValue("cmd.hidewireds.false", session.Language));
     }
 }

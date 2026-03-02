@@ -96,6 +96,7 @@ public class RoomUser : IEquatable<RoomUser>
     public bool TransfBot { get; set; }
     public string TransfRace { get; set; }
 
+    //Ballon
     public bool AllowBall { get; set; }
     public bool MoveWithBall { get; set; }
     public bool SetMoveWithBall { get; set; }

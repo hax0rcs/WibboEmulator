@@ -8,6 +8,6 @@ internal sealed class ObjectRemoveComposer : ServerPacket
         this.WriteString(itemId.ToString());
         this.WriteBoolean(false); //isExpired
         this.WriteInteger(ownerId);
-        this.WriteInteger(0);
+        this.WriteInteger(-1);
     }
 }

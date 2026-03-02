@@ -732,6 +732,11 @@ public class GameMap
 
         foreach (var roomItem in itemsOnSquare)
         {
+            if (this._room.RoomData.HideWireds && WiredUtillity.TypeIsWired(roomItem.ItemData.InteractionType))
+            {
+                continue;
+            }
+
             if (roomItem.TotalHeight > highestStack)
             {
                 if (roomItem.ItemData.IsSeat || roomItem.ItemData.InteractionType == InteractionType.BED)

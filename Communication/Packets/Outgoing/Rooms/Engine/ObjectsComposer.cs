@@ -7,6 +7,8 @@ using Games.Rooms;
 
 internal sealed class ObjectsComposer : ServerPacket
 {
+    private readonly List<Item> _writeItems = [];
+
     public ObjectsComposer(Item[] items, Room room)
         : base(ServerPacketHeader.FURNITURE_FLOOR)
     {
@@ -18,14 +20,33 @@ internal sealed class ObjectsComposer : ServerPacket
             this.WriteString(ownerItem.Value);
         }
 
-        this.WriteInteger(items.Length);
-        foreach (var item in items)
+        if (room.RoomData.HideWireds)
         {
-            this.WriteFloorItem(item, room.RoomData.HideWireds);
+            foreach (var roomItem in items)
+            {
+                if (WiredUtillity.AllowHideWiredType(roomItem.ItemData.InteractionType))
+                {
+                    continue;
+                }
+                else
+                {
+                    this._writeItems.Add(roomItem);
+                }
+            }
+        }
+        else
+        {
+            this._writeItems.AddRange(items);
+        }
 
+        this.WriteInteger(this._writeItems.Count);
+
+        foreach (var writeItem in this._writeItems)
+        {
+            this.WriteFloorItem(writeItem);
             this.WriteInteger(-1); // expires
             this.WriteInteger(room.IsGameMode ? 0 : 2);
-            this.WriteInteger(item.UserId);
+            this.WriteInteger(writeItem.UserId);
         }
     }
 
@@ -84,10 +105,10 @@ internal sealed class ObjectsComposer : ServerPacket
         }
     }
 
-    private void WriteFloorItem(Item item, bool hideWired)
+    private void WriteFloorItem(Item item)
     {
         this.WriteInteger(item.Id);
-        this.WriteInteger(hideWired && WiredUtillity.AllowHideWiredType(item.ItemData.InteractionType) ? SettingsManager.GetData<int>("wired.hide.item.id") : item.ItemData.SpriteId);
+        this.WriteInteger(item.ItemData.SpriteId);
         this.WriteInteger(item.X);
         this.WriteInteger(item.Y);
         this.WriteInteger(item.Rotation);

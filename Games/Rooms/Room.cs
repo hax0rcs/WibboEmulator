@@ -44,7 +44,7 @@ public class Room : IDisposable
     public GameMap GameMap { get; }
     public RoomItemHandling RoomItemHandling { get; }
     public RoomUserManager RoomUserManager { get; }
-    public Soccer Soccer { get; }
+    public Ballon Ballon { get; }
     public TeamManager TeamManager { get; }
     public BattleBanzai BattleBanzai { get; }
     public Freeze Freeze { get; }
@@ -117,7 +117,8 @@ public class Room : IDisposable
         this.Freeze = new Freeze(this);
         this.BattleBanzai = new BattleBanzai(this);
         this.TeamManager = new TeamManager();
-        this.Soccer = new Soccer(this);
+
+        this.Ballon = new Ballon(this);
 
         using var dbClient = DatabaseManager.Connection;
 

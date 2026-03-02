@@ -39,7 +39,7 @@ internal sealed class UpdateMagicTileEvent : IPacketEvent
                         heightToSet = 0;
                     }
 
-                    var totalZ = (heightToSet / 100.00);
+                    var totalZ = heightToSet / 100.00;
 
                     item.SetState(item.X, item.Y, totalZ);
 
@@ -56,7 +56,7 @@ internal sealed class UpdateMagicTileEvent : IPacketEvent
                         heightToSet = 0;
                     }
 
-                    var walkZ = (heightToSet / 100.00);
+                    var walkZ = heightToSet / 100.00;
 
                     item.SetState(item.X, item.Y, walkZ);
                     item.UpdateState();

@@ -1447,7 +1447,7 @@ public class RoomUserManager(Room room)
                 user.IsLay = false;
             }
 
-            room.Soccer.OnUserWalk(user, nextStep.X == user.GoalX && nextStep.Y == user.GoalY);
+            room.Ballon.OnUserWalk(user, nextStep.X == user.GoalX && nextStep.Y == user.GoalY);
             room.BattleBanzai.OnUserWalk(user);
         }
     }

@@ -360,7 +360,7 @@ public static class CommandManager
         //Register(177, new ChatToSpeech());
         //Register(178, new ChatToSpeechElevenlabs());
         //Register(179, new GiveBannerTroc());
-        Register(173, new TileHeight());
+        Register(173, new TileFlow());
         Register(174, new TileCopy());
         Register(175, new TileMove());
         Register(176, new ChatIcon());

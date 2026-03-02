@@ -104,7 +104,7 @@ public class InteractorFootball : FurniInteractor
 
         if (item.Room.GameMap.CanStackItem(newPoint.X, newPoint.Y, true))
         {
-            item.Room.Soccer.MoveBall(item, newPoint.X, newPoint.Y);
+            item.Room.Ballon.MoveBall(item, newPoint.X, newPoint.Y);
         }
 
         if (!user.MoveWithBall && !fromAfar && item.InteractionCountHelper == 0 && !item.Room.OldFoot)
@@ -178,7 +178,7 @@ public class InteractorFootball : FurniInteractor
             {
                 newX = newPoint.X;
                 newY = newPoint.Y;
-                item.Room.Soccer.HandleFootballGameItems(new Point(newPoint.X, newPoint.Y));
+                item.Room.Ballon.HandleFootballGameItems(new Point(newPoint.X, newPoint.Y));
             }
             else
             {

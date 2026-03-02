@@ -6,7 +6,7 @@ using Database.Daos.Room;
 using GameClients;
 using Rooms;
 
-public class TileHeight : IChatCommand
+public class TileFlow : IChatCommand
 {
     public void Execute(GameClient session, Room room, RoomUser roomUser, string[] parameters)
     {
